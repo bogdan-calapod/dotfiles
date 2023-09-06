@@ -150,7 +150,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # VI_MODE_SET_CURSOR=true
 # VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
 
-ZSH_TMUX_AUTOSTART=true
+# ZSH_TMUX_AUTOSTART=true
 
 plugins=(git virtualenv colorize docker node npm timewarrior zsh-yarn-completions tmux zsh-syntax-highlighting zsh-autosuggestions)
 
