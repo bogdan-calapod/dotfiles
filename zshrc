@@ -195,3 +195,8 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+## Tools ##
+
+# Load LS with Git - https://github.com/gerph/ls-with-git-status
+alias ls="$HOME/repos/misc/dotfiles/tools/lsgit.sh"
