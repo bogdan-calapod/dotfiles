@@ -48,7 +48,7 @@ alias ovftool='/usr/bin/vmware-ovftool/ovftool'
 alias wifipass='powershell.exe "Show-WiFiPassword"'
 alias bat='batcat'
 # alias ncspot='ncspot.exe'
-alias fixtime='sudo ntpdate -sb time.nist.gov'
+alias fixtime='sudo wslact time-sync'
 
 # ------------------------------ ­ƒî▓ Git Aliases ------------------------------ #
 alias ga='git add'
