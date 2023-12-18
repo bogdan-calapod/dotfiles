@@ -3,6 +3,9 @@ source $HOME/repos/misc/dotfiles/credentials.env
 # Enable vim mode
 bindkey -v
 
+# Enable autojump
+. /usr/share/autojump/autojump.sh
+
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/.local/bin:/usr/local/bin:/snap/bin:$PATH
 ### Aliases
