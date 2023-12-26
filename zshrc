@@ -3,9 +3,6 @@ source $HOME/repos/misc/dotfiles/credentials.env
 # Enable vim mode
 bindkey -v
 
-# Enable autojump
-. /usr/share/autojump/autojump.sh
-
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/.local/bin:/usr/local/bin:/snap/bin:$PATH
 ### Aliases
@@ -49,7 +46,7 @@ alias start-osx='docker run -it --device /dev/kvm -p 50922:10022 -v /tmp/.X11-un
 alias ytui="$HOME/.local/bin/ytui_music-linux-amd64"
 alias ovftool='/usr/bin/vmware-ovftool/ovftool'
 alias wifipass='powershell.exe "Show-WiFiPassword"'
-alias bat='batcat'
+which apt-get &>/dev/null && { alias bat='batcat' }
 # alias ncspot='ncspot.exe'
 alias fixtime='sudo wslact time-sync'
 
