@@ -7,7 +7,10 @@ bindkey -v
 export PATH=$HOME/.local/bin:/usr/local/bin:/snap/bin:$PATH
 ### Aliases
 
-export BROWSER=wslview
+if [[ $(grep -i Microsoft /proc/version) ]]; then
+	export BROWSER=wslview
+fi
+
 export PATH_TO_CODA_REPOS="$HOME/repos/coda"
 export PATH_TO_DEVOPS_TOOLS="$PATH_TO_CODA_REPOS/devops-tools"
 export PATH_TO_FOOTPRINT_CORE="$PATH_TO_CODA_REPOS/footprint-core"
