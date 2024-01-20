@@ -2,11 +2,10 @@ local wezterm = require 'wezterm'
 local config = {}
 
 config.color_scheme = 'tokyonight'
-config.front_end = 'OpenGL'
-config.freetype_load_target = 'HorizontalLcd'
+config.front_end = 'WebGpu'
 
 -- Font
-config.font = wezterm.font { family = 'Caskaydia Cove Nerd Font' }
+config.font = wezterm.font { family = 'MonaspiceAr Nerd Font' }
 config.font_size = 8.0
 config.font_rules = {
   {
