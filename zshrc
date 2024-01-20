@@ -31,39 +31,6 @@ export RABBITMQ_DEFAULT_PASS=rabbit
 
 export FP_DISABLE_COMMITIZEN=true
 
-# WSL-only environment and aliases
-if [[ $(grep -i Microsoft /proc/version) ]]; then
-  export JIRA_BROWSER=/usr/bin/wslview
-	export BROWSER=wslview
-  
-  alias ncspotw='ncspot.exe'
-  alias adb='/mnt/c/platform-tools/adb.exe'
-  alias fixtime='sudo wslact time-sync'
-  alias wifipass='powershell.exe "Show-WiFiPassword"'
-fi
-
-
-# 🎟️ Aliases
-alias pip=pip3
-alias python=python3
-alias start-osx='docker run -it --device /dev/kvm -p 50922:10022 -v /tmp/.X11-unix:/tmp/.X11-unix -e "DISPLAY=${DISPLAY:-:0.0}" -e GENERATE_UNIQUE=true sickcodes/docker-osx:auto'
-alias ytui="$HOME/.local/bin/ytui_music-linux-amd64"
-alias ovftool='/usr/bin/vmware-ovftool/ovftool'
-which apt-get &>/dev/null && { alias bat='batcat' }
-
-alias ga='git add'
-alias gac='ga .; gc'
-alias gacp='gac; gp'
-alias gs='git status'
-alias gc='git commit'
-alias gacfp='gac; gff; gp'
-alias gp='git pull --no-edit; git push'
-alias gff='HUSKY=0 git checkout develop && gp && git checkout @{-1} && git flow finish'
-alias vim='nvim'
-alias vi='nvim'
-
-# Load LS with Git - https://github.com/gerph/ls-with-git-status
-alias ls="$HOME/repos/misc/dotfiles/tools/lsgit.sh"
 
 # 🔑 SSH
 source /tmp/ssh-agent >/dev/null 2>&1
@@ -102,3 +69,35 @@ fi
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+# WSL-only environment and aliases
+if [[ $(grep -i Microsoft /proc/version) ]]; then
+  export JIRA_BROWSER=/usr/bin/wslview
+	export BROWSER=wslview
+  
+  alias ncspotw='ncspot.exe'
+  alias adb='/mnt/c/platform-tools/adb.exe'
+  alias fixtime='sudo wslact time-sync'
+  alias wifipass='powershell.exe "Show-WiFiPassword"'
+fi
+
+
+# 🎟️ Aliases
+alias pip=pip3
+alias python=python3
+alias start-osx='docker run -it --device /dev/kvm -p 50922:10022 -v /tmp/.X11-unix:/tmp/.X11-unix -e "DISPLAY=${DISPLAY:-:0.0}" -e GENERATE_UNIQUE=true sickcodes/docker-osx:auto'
+alias ytui="$HOME/.local/bin/ytui_music-linux-amd64"
+alias ovftool='/usr/bin/vmware-ovftool/ovftool'
+which apt-get &>/dev/null && { alias bat='batcat' }
+
+alias ga='git add'
+alias gac='ga .; gc'
+alias gacp='gac; gp'
+alias gs='git status'
+alias gc='git commit'
+alias gacfp='gac; gff; gp'
+alias gp='git pull --no-edit; git push'
+alias gff='HUSKY=0 git checkout develop && gp && git checkout @{-1} && git flow finish'
+alias vim='nvim'
+alias vi='nvim'
+
+alias ls="exa --git --icons -l"

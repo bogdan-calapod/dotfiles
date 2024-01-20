@@ -80,6 +80,7 @@
 
 # The command we'll actually run for listing.
 # Replacing this with 'gls' on MacOS with GNU coreutils will run the gnu version instead.
+alias ls='exa --icons'
 ls='ls'
 
 # Note: Decide what to do about GNU options for escaping (-b, -N, -q)
