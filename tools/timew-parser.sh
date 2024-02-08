@@ -4,9 +4,9 @@
 
 TIMEW_OUTPUT=$(timew | head -n 1)
 
-# Return the output directly if "Tracking" is not found
+# Return default output if "Tracking" is not found
 if [[ $TIMEW_OUTPUT != *"Tracking"* ]]; then
-  echo "$TIMEW_OUTPUT"
+  echo "⌚ No task"
   exit
 fi
 
@@ -25,5 +25,5 @@ if [[ $TIMEW_OUTPUT =~ "FN" ]]; then
 fi
 
 # If we get here, then we are tracking a misc task
-echo "$TITLE | $TASK_TITLE"
+echo "$TITLE | $TYPE | $TASK_TITLE"
 
