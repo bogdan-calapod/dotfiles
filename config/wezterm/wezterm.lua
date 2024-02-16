@@ -2,7 +2,6 @@ local wezterm = require 'wezterm'
 local config = {}
 
 config.color_scheme = 'tokyonight'
-config.front_end = 'WebGpu'
 
 -- Font
 config.font = wezterm.font { family = 'MonaspiceAr Nerd Font' }

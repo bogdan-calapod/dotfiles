@@ -6,7 +6,6 @@ TIMEW_OUTPUT=$(timew | head -n 1)
 
 # Return default output if "Tracking" is not found
 if [[ $TIMEW_OUTPUT != *"Tracking"* ]]; then
-  echo "⌚ No task"
   exit
 fi
 
@@ -14,12 +13,11 @@ TITLE=$(echo "$TIMEW_OUTPUT" | cut -d '"' -f1)
 TYPE=$(echo "$TIMEW_OUTPUT" | cut -d '"' -f4)
 SUBTYPE=$(echo "$TIMEW_OUTPUT" | cut -d '"' -f6)
 TASK_TITLE=$(echo "$TIMEW_OUTPUT" | cut -d '"' -f2)
+# Get task parts
+FN_NUMBER=$(echo "$TASK_TITLE" | cut -d ' ' -f1)
 
 # Trim everything after FN number in the first quoted string if it is found
 if [[ $TIMEW_OUTPUT =~ "FN" ]]; then
-  # Get task parts
-  FN_NUMBER=$(echo "$TASK_TITLE" | cut -d ' ' -f1)
-
   echo "$TITLE $TYPE | $SUBTYPE | $FN_NUMBER"
   exit
 fi
