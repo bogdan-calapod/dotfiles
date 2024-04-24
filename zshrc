@@ -100,4 +100,4 @@ alias gff='HUSKY=0 git checkout develop && gp && git checkout @{-1} && git flow 
 alias vim='nvim'
 alias vi='nvim'
 
-alias ls="exa --git --icons -l"
+alias ls="eza --git --icons -l"
