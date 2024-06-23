@@ -4,36 +4,36 @@ local config = {}
 config.color_scheme = 'tokyonight'
 
 -- Font
-config.font = wezterm.font { family = 'MonaspiceAr Nerd Font' }
+config.font = wezterm.font { family = 'JetBrainsMono Nerd Font' }
 config.font_size = 8.0
-config.font_rules = {
-  {
-    intensity = 'Bold',
-    italic = true,
-    font = wezterm.font {
-      family = 'MonaspiceRn Nerd Font',
-      weight = 'Bold',
-      style = 'Italic',
-    },
-  },
-  {
-    italic = true,
-    intensity = 'Half',
-    font = wezterm.font {
-      family = 'MonaspiceRn Nerd Font',
-      weight = 'Regular',
-      style = 'Italic',
-    },
-  },
-  {
-    italic = true,
-    intensity = 'Normal',
-    font = wezterm.font {
-      family = 'MonaspiceRn Nerd Font',
-      style = 'Italic',
-    },
-  },
-}
+-- config.font_rules = {
+--   {
+--     intensity = 'Bold',
+--     italic = true,
+--     font = wezterm.font {
+--       family = 'MonaspiceRn Nerd Font',
+--       weight = 'Bold',
+--       style = 'Italic',
+--     },
+--   },
+--   {
+--     italic = true,
+--     intensity = 'Half',
+--     font = wezterm.font {
+--       family = 'MonaspiceRn Nerd Font',
+--       weight = 'Regular',
+--       style = 'Italic',
+--     },
+--   },
+--   {
+--     italic = true,
+--     intensity = 'Normal',
+--     font = wezterm.font {
+--       family = 'MonaspiceRn Nerd Font',
+--       style = 'Italic',
+--     },
+--   },
+-- }
 
 -- Window appearance
 config.window_padding = { left = 0, right = 0, top = 4, bottom = 0 }
