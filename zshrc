@@ -24,7 +24,7 @@ export MYSQL_PASSWORD='root'
 
 export RABBITMQ_AMQP_PORT=5672
 export RABBITMQ_MANAGEMENT_PORT=15672
-export RABBITMQ_SERVER=192.100.0.2
+export RABBITMQ_SERVER=192.168.207.2
 export RABBITMQ_DEFAULT_VHOST=footprint-vhost-1
 export RABBITMQ_DEFAULT_USER=muie
 export RABBITMQ_DEFAULT_PASS=rabbit
@@ -70,14 +70,16 @@ fi
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # WSL-only environment and aliases
-if [[ $(grep -i Microsoft /proc/version) ]]; then
-  export JIRA_BROWSER=/usr/bin/wslview
-	export BROWSER=wslview
-  
-  alias ncspotw='ncspot.exe'
-  alias adb='/mnt/c/platform-tools/adb.exe'
-  alias fixtime='sudo wslact time-sync'
-  alias wifipass='powershell.exe "Show-WiFiPassword"'
+if [ -f /proc/version ];  then
+  if [[ $(grep -i Microsoft /proc/version) ]]; then
+    export JIRA_BROWSER=/usr/bin/wslview
+    export BROWSER=wslview
+    
+    alias ncspotw='ncspot.exe'
+    alias adb='/mnt/c/platform-tools/adb.exe'
+    alias fixtime='sudo wslact time-sync'
+    alias wifipass='powershell.exe "Show-WiFiPassword"'
+  fi
 fi
 
 
