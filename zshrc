@@ -15,7 +15,6 @@ export PYTHONPATH="$PATH_TO_CODA_REPOS/footprint-core/back/"
 export FOOTPRINT_DEPLOY_ENV=develop-
 
 # Confluence/Mark token
-export JIRA_BROWSER=/usr/bin/wslview
 export FOOTPRINT_PDF_GENERATOR_SERVICE="localhost:3010"
 
 export MYSQL_DATABASE='asgard_dev'
@@ -24,25 +23,28 @@ export MYSQL_PASSWORD='root'
 
 export RABBITMQ_AMQP_PORT=5672
 export RABBITMQ_MANAGEMENT_PORT=15672
-export RABBITMQ_SERVER=192.168.207.2
+export RABBITMQ_SERVER=192.100.0.3
 export RABBITMQ_DEFAULT_VHOST=footprint-vhost-1
-export RABBITMQ_DEFAULT_USER=muie
-export RABBITMQ_DEFAULT_PASS=rabbit
+export RABBITMQ_DEFAULT_USER=guest
+export RABBITMQ_DEFAULT_PASS=guest
 
 export FP_DISABLE_COMMITIZEN=true
 
+# Lazy load NVM
+export NVM_LAZY_LOAD=true
+export NVM_COMPLETION=true
 
-# 🔑 SSH
-source /tmp/ssh-agent >/dev/null 2>&1
-ssh-add 2>/dev/null
-if [ $? -ne 0 ]; then
-	ssh-agent >/tmp/ssh-agent
-	source /tmp/ssh-agent >/dev/null 2>&1
-	ssh-add 2>/dev/null
-fi
+# # 🔑 SSH
+# source /tmp/ssh-agent >/dev/null 2>&1
+# ssh-add 2>/dev/null
+# if [ $? -ne 0 ]; then
+# 	ssh-agent >/tmp/ssh-agent
+# 	source /tmp/ssh-agent >/dev/null 2>&1
+# 	ssh-add 2>/dev/null
+# fi
 source $PATH_TO_CODA_REPOS/devops-tools/coda-rc/.coda-rc
 
-# 📁 NVM Config
+# # 📁 NVM Config
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
@@ -55,7 +57,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
 
-plugins=(git virtualenv colorize docker node npm timewarrior zsh-yarn-completions tmux zsh-syntax-highlighting zsh-autosuggestions)
+plugins=(zsh-nvm git virtualenv colorize docker node npm timewarrior zsh-yarn-completions tmux zsh-syntax-highlighting zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -102,4 +104,14 @@ alias gff='HUSKY=0 git checkout develop && gp && git checkout @{-1} && git flow 
 alias vim='nvim'
 alias vi='nvim'
 
+export VISUAL='nvim'
+export EDITOR='nvim'
+
 alias ls="eza --git --icons -l"
+
+# For presenterm-export to work
+export DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib:$DYLD_FALLBACK_LIBRARY_PATH
+
+. "$HOME/.atuin/bin/env"
+
+eval "$(atuin init zsh --disable-up-arrow)"
