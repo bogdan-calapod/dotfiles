@@ -192,11 +192,21 @@ run = 'layout floating'
 if.app-id = 'o wezterm connect wuake --class org.wezfurlong.wezterm.wuakerg.wezfurlong.wezterm.wuake'
 run = 'layout floating'
 
+# Ignore Finder
+[[on-window-detected]]
+if.app-id = 'com.apple.finder'
+run = 'layout floating'
+
 
 # Auto window shift
 
+
 [[on-window-detected]]
 if.app-id = 'com.github.wez.wezterm'
+run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+if.app-id = 'net.kovidgoyal.kitty'
 run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
