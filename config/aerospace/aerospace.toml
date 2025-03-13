@@ -123,8 +123,9 @@ ctrl-shift-k = 'move up'
 ctrl-shift-l = 'move right'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#resize
-cmd-ctrl-alt-shift-semicolon = 'resize smart -50'
-cmd-ctrl-alt-shift-quote = 'resize smart +50'
+cmd-ctrl-alt-shift-leftSquareBracket = 'resize smart +250'
+cmd-ctrl-alt-shift-rightSquareBracket = 'resize smart -250'
+cmd-ctrl-alt-shift-p = 'focus-monitor prev --wrap-around'
 cmd-ctrl-alt-shift-n = 'focus-monitor next --wrap-around'
 alt-shift-n = 'move-workspace-to-monitor next --wrap-around'
 ctrl-cmd-shift-n = 'move-node-to-monitor next --focus-follows-window --wrap-around'
