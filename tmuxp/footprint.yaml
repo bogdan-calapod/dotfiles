@@ -1,0 +1,20 @@
+session_name: 💼 Footprint
+windows:
+  - window_name: 📝 Editor
+    layout: tiled
+    shell_command_before:
+      - fp
+    panes:
+      - nvim
+  - window_name: 🚚 Server
+    layout: main-vertical
+    panes:
+      - fp
+      - fpf
+      - fpb
+  - window_name: 🧠 GPT
+    panes:
+      - tgpt
+  - window_name: 🗓️ Sprint
+    panes:
+      - current-sprint
