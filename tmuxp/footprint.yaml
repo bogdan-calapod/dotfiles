@@ -1,9 +1,8 @@
 session_name: 💼 Footprint
+start_directory: ~/repos/coda/footprint-core
 windows:
   - window_name: 📝 Editor
     layout: tiled
-    shell_command_before:
-      - fp
     panes:
       - nvim
   - window_name: 🚚 Server
@@ -14,7 +13,10 @@ windows:
       - fpb
   - window_name: 🧠 GPT
     panes:
-      - tgpt
-  - window_name: 🗓️ Sprint
+      - tgpt -i
+  - window_name: 🗓️ Tracking
+    layout: main-vertical
     panes:
+      - fp
       - current-sprint
+      - watch timew summary

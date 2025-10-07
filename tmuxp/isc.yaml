@@ -1,0 +1,7 @@
+session_name: 🚚 ISC
+start_directory: ~/repos/coda/internal-scanner-controller/
+windows:
+  - window_name: 📝 Editor
+    layout: tiled
+    panes:
+      - nvim

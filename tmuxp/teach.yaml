@@ -1,0 +1,9 @@
+session_name: 🧠 Teaching App
+start_directory: ~/repos/misc/tests-app/
+windows:
+  - window_name: 📝 Editor
+    panes:
+      - nvim
+  - window_name: 🚚 Server
+    panes:
+      - npm run start
