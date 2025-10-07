@@ -1,6 +1,7 @@
 local wezterm = require("wezterm")
 local config = {}
-local font = "Maple Mono NF"
+local font = "MonaspiceAr Nerd Font Propo"
+local italicFont = "MonaspiceRn Nerd Font Propo"
 
 -- Theme
 config.color_scheme = "tokyonight"
@@ -9,89 +10,53 @@ config.color_scheme = "tokyonight"
 config.font_rules = {
 	{
 		intensity = "Bold",
+		italic = false,
+		font = wezterm.font({ family = font, style = "Normal" }),
+	},
+	{
+		intensity = "Normal",
+		italic = false,
+		font = wezterm.font({ family = font, style = "Normal" }),
+	},
+	{
+		intensity = "Half",
+		italic = false,
+		font = wezterm.font({ family = font, style = "Normal" }),
+	},
+	{
+		intensity = "Bold",
 		italic = true,
-		font = wezterm.font({ family = font, style = "Italic" }),
+		font = wezterm.font({ family = italicFont, style = "Italic" }),
 	},
 	{
 		intensity = "Normal",
 		italic = true,
-		font = wezterm.font({ family = font, style = "Italic" }),
+		font = wezterm.font({ family = italicFont, style = "Italic" }),
 	},
 	{
 		intensity = "Half",
 		italic = true,
-		font = wezterm.font({ family = font, style = "Italic" }),
+		font = wezterm.font({ family = italicFont, style = "Italic" }),
 	},
 }
 config.font_size = 12.0
+config.line_height = 1.1
+config.cell_width = 1.0
+config.enable_kitty_graphics = true
+config.freetype_load_flags = "NO_HINTING"
 
 -- Window appearance
 config.window_padding = { left = 0, right = 0, top = 4, bottom = 0 }
 config.window_decorations = "RESIZE"
 config.macos_window_background_blur = 20
 
--- Keybinds
-config.leader = { key = "h", mods = "CTRL", timeout_milliseconds = 5000 }
-config.keys = {
-	{
-		key = "j",
-		mods = "LEADER",
-		action = wezterm.action.ActivatePaneDirection("Down"),
-	},
-	{
-		key = "k",
-		mods = "LEADER",
-		action = wezterm.action.ActivatePaneDirection("Up"),
-	},
-	{
-		key = "l",
-		mods = "LEADER",
-		action = wezterm.action.ActivatePaneDirection("Right"),
-	},
-	{
-		key = "h",
-		mods = "LEADER",
-		action = wezterm.action.ActivatePaneDirection("Left"),
-	},
-	{
-		key = "v",
-		mods = "LEADER",
-		action = wezterm.action.SplitVertical({ domain = "CurrentPaneDomain" }),
-	},
-	{
-		key = "s",
-		mods = "LEADER",
-		action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
-	},
-	{
-		key = "c",
-		mods = "LEADER",
-		action = wezterm.action.SpawnTab("DefaultDomain"),
-	},
-	{
-		key = "x",
-		mods = "LEADER",
-		action = wezterm.action.CloseCurrentTab({ confirm = true }),
-	},
-	{
-		key = "[",
-		mods = "LEADER",
-		action = wezterm.action.ActivateCopyMode,
-	},
-	{
-		key = "z",
-		mods = "LEADER",
-		action = wezterm.action.TogglePaneZoomState,
-	},
-}
-
 -- Misc config
-config.term = "wezterm"
+config.term = "xterm-256color"
 config.enable_tab_bar = false
 config.automatically_reload_config = true
 config.window_background_opacity = 1
 
--- Maximize window on start
+-- Maximize window on stars;t
 wezterm.on("gui-startup", function()
 	local tab, pane, window = wezterm.mux.spawn_window()
 	window:gui_window():toggle_fullscreen()

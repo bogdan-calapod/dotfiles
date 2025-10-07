@@ -6,12 +6,14 @@
 # Available commands: https://nikitabobko.github.io/AeroSpace/commands
 after-login-command = []
 
-after-startup-command = [
-  'exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0',
-]
+after-startup-command = []
 
 exec-on-workspace-change = [
+  '/bin/bash',
+  '-c',
+  'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE PREV_WORKSPACE=$AEROSPACE_PREV_WORKSPACE',
   '/Users/bogdan/.config/aerospace/on-ws-change.sh',
+  # 'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE PREV_WORKSPACE=$AEROSPACE_PREV_WORKSPACE',
   # '/Users/bogdan/.config/aerospace/ghost-windows.sh',
 ]
 
@@ -55,7 +57,7 @@ preset = 'qwerty'
 # Gaps between windows (inner-*) and between monitor edges (outer-*).
 # Possible values:
 # - Constant:     gaps.outer.top = 8
-# - Per monitor:  gaps.outer.top = [{ monitor.main = 16 }, { monitor."some-pattern" = 32 }, 24]
+# - Per monitor:  gaps.outer.top = [{  }, { monitor."some-pattern" = 32 }, 24]
 #                 In this example, 24 is a default value when there is no match.
 #                 Monitor pattern is the same as for 'workspace-to-monitor-force-assignment'.
 #                 See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
@@ -73,7 +75,7 @@ inner.horizontal = 2
 inner.vertical = 2
 outer.left = 2
 outer.bottom = 2
-outer.top = 2
+outer.top = [{ monitor."built-in" = 0 }, 20]
 outer.right = 2
 
 # 'main' binding mode declaration
@@ -127,6 +129,7 @@ cmd-ctrl-alt-shift-leftSquareBracket = 'resize smart +250'
 cmd-ctrl-alt-shift-rightSquareBracket = 'resize smart -250'
 cmd-ctrl-alt-shift-p = 'focus-monitor prev --wrap-around'
 cmd-ctrl-alt-shift-n = 'focus-monitor next --wrap-around'
+alt-shift-p = 'move-workspace-to-monitor prev --wrap-around'
 alt-shift-n = 'move-workspace-to-monitor next --wrap-around'
 ctrl-cmd-shift-n = 'move-node-to-monitor next --focus-follows-window --wrap-around'
 
@@ -201,19 +204,34 @@ run = 'layout floating'
 
 # Auto window shift
 
+# Terminal apps 
+[[on-window-detected]]
+if.app-id = 'Zen'
+run = 'move-node-to-workspace 1'
 
+# Terminal apps 
 [[on-window-detected]]
 if.app-id = 'com.github.wez.wezterm'
+run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+if.app-id = 'com.mitchellh.ghostty'
 run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
 if.app-id = 'net.kovidgoyal.kitty'
 run = 'move-node-to-workspace 2'
 
+# Work Chat apps
+[[on-window-detected]]
+if.app-id = 'com.hnc.Discord'
+run = 'move-node-to-workspace 3'
+
 [[on-window-detected]]
 if.app-id = 'com.tinyspeck.slackmacgap'
 run = 'move-node-to-workspace 3'
 
+# Communication apps
 [[on-window-detected]]
 if.app-id = 'net.whatsapp.WhatsApp'
 run = 'move-node-to-workspace 4'
@@ -222,10 +240,20 @@ run = 'move-node-to-workspace 4'
 if.app-id = 'com.microsoft.Outlook'
 run = 'move-node-to-workspace 4'
 
+# Misc work apps
 [[on-window-detected]]
 if.app-id = 'md.obsidian'
 run = 'move-node-to-workspace 5'
-#
+
+[[on-window-detected]]
+if.app-id = 'com.microsoft.to-do-mac'
+run = 'move-node-to-workspace 5'
+
+# Misc other
+[[on-window-detected]]
+if.app-id = 'com.microsoft.edgemac'
+run = 'move-node-to-workspace 10'
+
 # [[on-window-detected]]
 # if.app-id = 'com.apple.finder'
 # run = 'layout floating'
