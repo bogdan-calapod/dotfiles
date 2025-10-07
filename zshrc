@@ -100,7 +100,6 @@ alias ls="eza --git --icons -l"
 # For presenterm-export to work
 export DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib:$DYLD_FALLBACK_LIBRARY_PATH
 
-. "$HOME/.atuin/bin/env"
 
 eval "$(atuin init zsh --disable-up-arrow)"
 
