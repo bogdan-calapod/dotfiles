@@ -42,7 +42,7 @@ if [ $? -ne 0 ]; then
 	source /tmp/ssh-agent >/dev/null 2>&1
 	ssh-add 2>/dev/null
 fi
-# source $PATH_TO_CODA_REPOS/devops-tools/coda-rc/.coda-rc
+source $PATH_TO_CODA_REPOS/devops-tools/coda-rc/.coda-rc
 
 # # 📁 NVM Config
 export NVM_DIR="$HOME/.nvm"
