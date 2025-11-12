@@ -74,11 +74,15 @@ preset = 'qwerty'
 # 6 = 'secondary'
 
 [gaps]
+outer.top = [
+  { monitor."Built-in Retina Display" = 0 },
+  { monitor."Built-in Display" = 0 },
+  30,
+]
 inner.horizontal = 2
 inner.vertical = 2
 outer.left = 2
 outer.bottom = 2
-outer.top = [{ monitor."Built-in Retina Display" = 0 }, 30]
 outer.right = 2
 
 # 'main' binding mode declaration
