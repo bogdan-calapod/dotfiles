@@ -1,0 +1,11 @@
+name: 📡 Houston
+root: ~/repos/pdq/houston
+
+windows:
+  - houston:
+      name: "📡 Houston"
+      layout: main-vertical
+      panes:
+        - nvim
+        - mix start
+        - opencode

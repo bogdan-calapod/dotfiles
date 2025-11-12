@@ -1,0 +1,8 @@
+name: 🚚 ISC
+root: ~/repos/coda/internal-scanner-controller/
+
+windows:
+  - 📝 Editor:
+      layout: tiled
+      panes:
+        - nvim

@@ -1,0 +1,23 @@
+name: 💼 Footprint
+root: ~/repos/coda/footprint-core
+
+windows:
+  - 📝 Editor:
+      layout: tiled
+      panes:
+        - nvim
+  - 🚚 Server:
+      layout: main-vertical
+      panes:
+        - fp
+        - fpf
+        - fpb
+  - 🧠 GPT:
+      panes:
+        - tgpt -i
+  - 🗓️ Tracking:
+      layout: main-vertical
+      panes:
+        - fp
+        - current-sprint
+        - watch timew summary

@@ -1,5 +1,0 @@
-session_name: 🚚 Servers
-windows:
-  - window_name: 👨‍💻 Server 1
-    panes:
-      - ls

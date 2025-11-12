@@ -220,7 +220,7 @@ return {
 	["Live"] = "󰝚",
 	["Grammarly Editor"] = "󰓦",
 	["ClickUp"] = "󰸘",
-	["Linear"] = "󰸘",
+	["Linear"] = "",
 	["Trello"] = "󰘅",
 	["Miro"] = "󰇥",
 	["Zotero"] = "󰂺",
@@ -275,4 +275,3 @@ return {
 	["default"] = "",
 	["Default"] = "",
 }
-

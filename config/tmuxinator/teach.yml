@@ -1,0 +1,10 @@
+name: 🧠 Teaching App
+root: ~/repos/misc/tests-app/
+
+windows:
+  - 📝 Editor:
+      panes:
+        - nvim
+  - 🚚 Server:
+      panes:
+        - npm run start

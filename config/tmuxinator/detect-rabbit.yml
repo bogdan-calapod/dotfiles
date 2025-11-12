@@ -1,0 +1,10 @@
+name: 🐰 Detect Rabbit
+root: ~/
+
+windows:
+  - 🐰 Rabbit Debug:
+      panes:
+        - cd ~/repos/coda/devops && task glogin
+        - gcloud container clusters get-credentials main --project prod-4c32cd17 --region us-central1
+        - kubectl port-forward service/coda-footprint-rabbit 15673:15672 -n coda-footprint-rabbit
+        - kubectl exec -it coda-footprint-rabbit-7f79675dd9-s2sr7 -n coda-footprint-rabbit -- bash

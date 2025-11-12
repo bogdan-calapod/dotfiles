@@ -1,0 +1,11 @@
+name: 💡 ILabs
+root: ~/repos/techlounge/innovation-labs-website/packages/frontend
+
+windows:
+  - 📝 Editor:
+      layout: tiled
+      panes:
+        - nvim
+  - 🚚 Server:
+      panes:
+        - npm run start

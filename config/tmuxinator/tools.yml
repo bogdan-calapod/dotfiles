@@ -1,0 +1,11 @@
+name: 🧰 Tools
+root: ~/repos/coda/footprint-core
+
+windows:
+  - 🧠 GPT:
+      panes:
+        - tgpt -i
+  - 📊 Stats:
+      layout: main-vertical
+      panes:
+        - btop

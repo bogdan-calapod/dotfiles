@@ -1,0 +1,7 @@
+name: 🚚 Servers
+root: ~/
+
+windows:
+  - 👨‍💻 Server 1:
+      panes:
+        - ls
