@@ -6,7 +6,10 @@
 # Available commands: https://nikitabobko.github.io/AeroSpace/commands
 after-login-command = []
 
-after-startup-command = []
+after-startup-command = [
+  'exec-and-forget sh ~/.config/sketchybar/helpers/media-control.sh',
+]
+
 
 exec-on-workspace-change = [
   '/bin/bash',
@@ -75,7 +78,7 @@ inner.horizontal = 2
 inner.vertical = 2
 outer.left = 2
 outer.bottom = 2
-outer.top = [{ monitor."built-in" = 0 }, 20]
+outer.top = [{ monitor."Built-in Retina Display" = 0 }, 30]
 outer.right = 2
 
 # 'main' binding mode declaration
