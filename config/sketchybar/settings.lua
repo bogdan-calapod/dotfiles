@@ -85,7 +85,7 @@ return {
 		height = default_config.item_height,
 		gap = 5,
 		padding = {
-			right = 0,
+			right = 5,
 			left = 12,
 			top = 0,
 			bottom = 0,
@@ -102,8 +102,8 @@ return {
 		corner_radius = 4,
 	},
 
-	icons = "sketchybar-app-font:Regular:12.0",
-	nerd_font = "FiraCode Nerd Font Mono:Regular:16.0",
+	icons = "Maple Mono NF:Regular:16.0",
+	nerd_font = "Maple Mono NF:Regular:16.0",
 	calendarfont = "sketchybar-app-font:Regular:10.0",
 
 	font = {

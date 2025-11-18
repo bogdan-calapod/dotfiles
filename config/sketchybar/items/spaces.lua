@@ -26,17 +26,17 @@ for i, workspace in ipairs(workspaces) do
 			},
 			string = i,
 			padding_left = settings.items.padding.left,
-			padding_right = settings.items.padding.left / 2,
+			padding_right = settings.items.padding.left,
 			color = settings.items.default_color(i),
 			highlight_color = settings.items.highlight_color(i),
 			highlight = selected,
 		},
 		label = {
-			padding_right = settings.items.padding.right,
+			padding_right = 10,
 			color = settings.items.default_color(i),
 			highlight_color = settings.items.highlight_color(i),
 			font = { family = settings.nerd_font, size = 11.0 },
-			y_offset = -1,
+			y_offset = 0,
 			highlight = selected,
 		},
 		padding_right = 1,
@@ -90,7 +90,6 @@ for i, workspace in ipairs(workspaces) do
 	local space_popup = sbar.add("item", {
 		position = "popup." .. space.name,
 		padding_left = 5,
-		padding_right = 0,
 		background = {
 			drawing = true,
 			image = {
@@ -101,16 +100,17 @@ for i, workspace in ipairs(workspaces) do
 	})
 
 	space:subscribe("aerospace_workspace_change", function(env)
-		local selected = env.FOCUSED_WORKSPACE == workspace
+		local selecteds = env.FOCUSED_WORKSPACE == workspace
 		space:set({
 			icon = {
-				highlight = selected,
+				highlight = selecteds,
+				padding_right = 5,
 			},
 			label = {
-				highlight = selected,
+				highlight = selecteds,
 			},
 			background = {
-				border_color = selected and settings.items.highlight_color(i) or settings.items.default_color(i),
+				border_color = selecteds and settings.items.highlight_color(i) or settings.items.default_color(i),
 			},
 		})
 	end)
@@ -149,11 +149,11 @@ local space_window_observer = sbar.add("item", {
 
 -- Handles the small icon indicator for spaces / menus changes
 local spaces_indicator = sbar.add("item", {
-	padding_left = -3,
+	padding_left = 0,
 	padding_right = 0,
 	icon = {
-		padding_left = 8,
-		padding_right = 9,
+		padding_left = 0,
+		padding_right = 0,
 		color = colors.red,
 		string = icons.switch.on,
 	},
@@ -185,13 +185,12 @@ space_window_observer:subscribe("space_windows_change", function(env)
 			end
 
 			if no_app then
-				icon_line = " —"
+				icon_line = " "
 			end
 
 			sbar.animate("tanh", 10, function()
 				spaces[i]:set({
-					-- TODO: Set icon line here
-					label = "", -- icon_line,
+					label = icon_line,
 				})
 			end)
 		end)
