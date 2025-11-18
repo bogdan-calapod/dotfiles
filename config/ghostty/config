@@ -1,0 +1,12 @@
+macos-option-as-alt = true
+mouse-hide-while-typing = true
+background-blur = true
+background-opacity = 0.9
+keybind = global:option+backquote=toggle_quick_terminal
+
+# Font configuration
+font-family = Maple Mono NF
+font-size = 13
+
+# Background color
+background = 000000

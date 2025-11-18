@@ -18,8 +18,8 @@ get_next_event() {
     local is_current=false
     
     while IFS= read -r line; do
-      # Check if this is an event title line
-      if [[ $line =~ •.*$ ]]; then
+      # Check if this is an event title line (has • but exclude phone numbers)
+      if [[ $line =~ •.*$ ]] && [[ ! $line =~ \+[0-9].* ]]; then
         event_title=$(echo "$line" | sed 's/.*• //' | sed 's/\[[0-9;]*m//g' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
       # Check if this is a time line
       elif [[ $line =~ [0-9][0-9]:[0-9][0-9].*-.*[0-9][0-9]:[0-9][0-9] ]]; then
@@ -83,7 +83,7 @@ get_next_event() {
     local event_time=""
     
     while IFS= read -r line; do
-      if [[ $line =~ •.*$ ]]; then
+      if [[ $line =~ •.*$ ]] && [[ ! $line =~ \+[0-9].* ]]; then
         event_title=$(echo "$line" | sed 's/.*• //' | sed 's/\[[0-9;]*m//g' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
       elif [[ $line =~ [0-9][0-9]:[0-9][0-9].*-.*[0-9][0-9]:[0-9][0-9] ]]; then
         local time_match=$(echo "$line" | grep -o '[0-9][0-9]:[0-9][0-9] - [0-9][0-9]:[0-9][0-9]')

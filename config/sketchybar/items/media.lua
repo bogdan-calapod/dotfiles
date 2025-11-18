@@ -76,7 +76,7 @@ sbar.add("item", {
 	label = {
 		drawing = false,
 	},
-	click_script = "media-control previous-track",
+	click_script = "/opt/homebrew/bin/media-control previous-track",
 })
 sbar.add("item", {
 	position = "popup." .. media_cover.name,
@@ -86,7 +86,7 @@ sbar.add("item", {
 	label = {
 		drawing = false,
 	},
-	click_script = "media-control toggle-play-pause",
+	click_script = "/opt/homebrew/bin/media-control toggle-play-pause",
 })
 sbar.add("item", {
 	position = "popup." .. media_cover.name,
@@ -96,7 +96,7 @@ sbar.add("item", {
 	label = {
 		drawing = false,
 	},
-	click_script = "media-control next-track",
+	click_script = "/opt/homebrew/bin/media-control next-track",
 })
 
 local interrupt = 0
@@ -123,23 +123,29 @@ local function animate_detail(detail)
 end
 
 media_cover:subscribe("media_stream_changed", function(env)
-	local drawing = true
+	-- Show media widget when we have title and artist  
+	local title = env.title or ""
+	local artist = env.artist or ""
+	local playing = env.playing or "false"
+	
+	local has_media = (title ~= "" and artist ~= "")
+	local drawing = has_media
+	
 	media_artist:set({
 		drawing = drawing,
-		label = env.INFO.artist,
+		label = artist,
 	})
 	media_title:set({
 		drawing = drawing,
-		label = env.INFO.title,
+		label = title,
 	})
 	media_cover:set({
 		drawing = drawing,
 	})
 
 	if drawing then
+		-- Keep text visible permanently while media is playing
 		animate_detail(true)
-		interrupt = interrupt + 1
-		sbar.delay(5, animate_detail)
 	else
 		media_cover:set({
 			popup = {
@@ -173,3 +179,6 @@ media_title:subscribe("mouse.exited.global", function(env)
 		},
 	})
 end)
+
+-- Start the media-control helper script to stream media updates
+sbar.exec("pkill -f 'helpers/media-control.sh' 2>/dev/null; sleep 0.1 && /Users/bogdan/repos/misc/dotfiles/config/sketchybar/helpers/media-control.sh >/dev/null 2>&1 &")

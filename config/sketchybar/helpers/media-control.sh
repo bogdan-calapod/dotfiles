@@ -30,5 +30,6 @@ media-control stream |
     fi
 
     echo "title: $title, artist: $artist, playing: $playing"
+    # Use simple parameter names instead of INFO.* format
     sketchybar --trigger media_stream_changed title="$title" artist="$artist" playing="$playing"
   done
