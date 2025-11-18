@@ -97,7 +97,7 @@ return {
 			return colors.rainbow[4]
 		end,
 		colors = {
-			background = colors.bg1,
+			background = colors.transparent,
 		},
 		corner_radius = 4,
 	},
