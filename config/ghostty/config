@@ -1,12 +1,16 @@
 macos-option-as-alt = true
+macos-titlebar-style = hidden
 mouse-hide-while-typing = true
 background-blur = true
 background-opacity = 0.9
 keybind = global:option+backquote=toggle_quick_terminal
 
 # Font configuration
-font-family = Maple Mono NF
+font-family = 0xProto Nerd Font Mono
 font-size = 13
+font-thicken=true
+font-thicken-strength=1
+adjust-cell-height=1
 
 # Background color
 background = 000000
