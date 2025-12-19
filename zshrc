@@ -1,4 +1,3 @@
-source $HOME/repos/misc/dotfiles/credentials.env
 #
 # 🏞️ Environment Variables
 export PATH=$HOME/.local/bin:/usr/local/bin:/snap/bin:$PATH
