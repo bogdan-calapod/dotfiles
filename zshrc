@@ -115,4 +115,4 @@ ssh() {
 }
 
 
-eval "$(oh-my-posh init zsh --config ~/repos/misc/dotfiles/config/oh-my-posh/config.json)"
+eval "$(starship init zsh)"
