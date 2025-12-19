@@ -49,6 +49,15 @@ battery:subscribe({ "routine", "power_source_change", "system_woke" }, function(
 		local color = colors.green
 		local charging, _, _ = batt_info:find("AC Power")
 
+		-- Check for time remaining when on battery
+		local time_remaining = ""
+		if not charging then
+			local time_found, _, remaining = batt_info:find(" (%d+:%d+) remaining")
+			if time_found then
+				time_remaining = " (" .. remaining .. ")"
+			end
+		end
+
 		if charging then
 			icon = icons.battery.charging
 		else
@@ -78,7 +87,7 @@ battery:subscribe({ "routine", "power_source_change", "system_woke" }, function(
 				color = color,
 			},
 			label = {
-				string = lead .. label,
+				string = lead .. label .. time_remaining,
 			},
 		})
 	end)
