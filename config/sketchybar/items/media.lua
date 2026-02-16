@@ -181,4 +181,4 @@ media_title:subscribe("mouse.exited.global", function(env)
 end)
 
 -- Start the media-control helper script to stream media updates
-sbar.exec("pkill -f 'helpers/media-control.sh' 2>/dev/null; sleep 0.1 && /Users/bogdan/repos/misc/dotfiles/config/sketchybar/helpers/media-control.sh >/dev/null 2>&1 &")
+sbar.exec("pkill -f 'helpers/media-control' 2>/dev/null; sleep 0.1 && /Users/bogdan/repos/misc/dotfiles/config/sketchybar/helpers/media-control-wrapper.sh &")

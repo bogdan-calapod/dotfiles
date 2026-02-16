@@ -21,8 +21,20 @@ return {
     bg1 = 0xff363944,
     bg2 = 0xff414550,
 
-    rainbow = {0xffff007c, 0xffc53b53, 0xffff757f, 0xff41a6b5, 0xff4fd6be, 0xffc3e88d, 0xffffc777, 0xff9d7cd8,
-               0xffff9e64, 0xffbb9af7, 0xff7dcfff, 0xff7aa2f7},
+    rainbow = {
+        0xfff38ba8, -- red (for red spectrum)
+        0xffeba0ac, -- maroon (red-orange transition)
+        0xfffab387, -- peach (orange)
+        0xfff9e2af, -- yellow
+        0xffa6e3a1, -- green
+        0xff94e2d5, -- teal (green-blue transition)
+        0xff89dceb, -- sky (light blue)
+        0xff74c7ec, -- sapphire (blue)
+        0xff89b4fa, -- blue (deeper blue)
+        0xffb4befe, -- lavender (blue-purple transition)
+        0xffcba6f7, -- mauve (purple)
+        0xfff5c2e7, -- pink (purple-red transition)
+    },
 
     with_alpha = function(color, alpha)
         if alpha > 1.0 or alpha < 0.0 then

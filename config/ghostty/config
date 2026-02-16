@@ -13,7 +13,7 @@ font-thicken-strength=1
 adjust-cell-height=1
 
 # Colors
-background = #1a1b26
+background = #000
 foreground = #c0caf5
 selection-background = #283457
 selection-foreground = #c0caf5

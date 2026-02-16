@@ -208,6 +208,11 @@ run = 'layout floating'
 if.app-id = 'com.apple.finder'
 run = 'layout floating'
 
+# Ignore Terminal.app
+[[on-window-detected]]
+if.app-id = 'com.apple.Terminal'
+run = 'layout floating'
+
 
 # Auto window shift
 
@@ -238,6 +243,10 @@ run = 'move-node-to-workspace 3'
 if.app-id = 'com.tinyspeck.slackmacgap'
 run = 'move-node-to-workspace 3'
 
+[[on-window-detected]]
+if.app-id = 'com.openai.chat'
+run = 'move-node-to-workspace 4'
+
 # Communication apps
 [[on-window-detected]]
 if.app-id = 'net.whatsapp.WhatsApp'
@@ -247,6 +256,14 @@ run = 'move-node-to-workspace 4'
 if.app-id = 'com.microsoft.Outlook'
 run = 'move-node-to-workspace 4'
 
+[[on-window-detected]]
+if.app-id = 'com.apple.mail'
+run = 'move-node-to-workspace 4'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.iCal'
+run = 'move-node-to-workspace 4'
+
 # Misc work apps
 [[on-window-detected]]
 if.app-id = 'md.obsidian'
@@ -254,6 +271,18 @@ run = 'move-node-to-workspace 5'
 
 [[on-window-detected]]
 if.app-id = 'com.microsoft.to-do-mac'
+run = 'move-node-to-workspace 5'
+
+[[on-window-detected]]
+if.app-id = 'com.linear'
+run = 'move-node-to-workspace 5'
+
+[[on-window-detected]]
+if.app-id = 'notion.id'
+run = 'move-node-to-workspace 5'
+
+[[on-window-detected]]
+if.app-id = 'ai.elementlabs.lmstudio'
 run = 'move-node-to-workspace 5'
 
 # Misc other

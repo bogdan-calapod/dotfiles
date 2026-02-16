@@ -53,7 +53,7 @@ end
 local default_config = {
 	height = 30, -- Standard height (notch_display_height handles Built-in Display)
 	padding_x = 10, -- Standard padding
-	item_height = 18, -- Standard item height
+	item_height = 21, -- Standard item height
 }
 
 return {
@@ -86,15 +86,15 @@ return {
 		gap = 5,
 		padding = {
 			right = 5,
-			left = 12,
+			left = 5,
 			top = 0,
 			bottom = 0,
 		},
 		default_color = function(workspace)
-			return colors.grey
+			return colors.white
 		end,
 		highlight_color = function(workspace)
-			return colors.rainbow[4]
+			return colors.rainbow[workspace]
 		end,
 		colors = {
 			background = colors.transparent,
@@ -102,13 +102,13 @@ return {
 		corner_radius = 4,
 	},
 
-	icons = "Maple Mono NF:Regular:16.0",
-	nerd_font = "Maple Mono NF:Regular:16.0",
-	calendarfont = "sketchybar-app-font:Regular:10.0",
+	icons = "FiraCode Nerd Font Mono:Regular:16.0",
+	nerd_font = "FiraCode Nerd Font Mono",
+	calendarfont = "Helvetica:Regular:10.0",
 
 	font = {
-		text = "FiraCode Nerd Font Mono", -- Used for text
-		numbers = "FiraCode Nerd Font Mono", -- Used for numbers
+		text = "Helvetica", -- Used for text
+		numbers = "Helvetica", -- Used for numbers
 		style_map = {
 			["Regular"] = "Regular",
 			["Semibold"] = "Medium",

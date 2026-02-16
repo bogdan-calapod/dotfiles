@@ -1,3 +1,8 @@
+#!/bin/bash
+
+# Ensure PATH includes homebrew
+export PATH="/opt/homebrew/bin:$PATH"
+
 title=""
 artist=""
 playing="false"
@@ -26,7 +31,7 @@ update_bar() {
     playing="$new_playing"
   fi
 
-  echo "title: $title, artist: $artist, playing: $playing"
+  echo "$(date): title: $title, artist: $artist, playing: $playing" >> /tmp/media-control-debug.log
   sketchybar --trigger media_stream_changed title="$title" artist="$artist" playing="$playing"
 }
 
@@ -40,22 +45,37 @@ get_ncspot_status() {
 # Function to parse ncspot JSON and extract info
 parse_ncspot_json() {
   local json="$1"
-  if [ -n "$json" ] && echo "$json" | jq -e . >/dev/null 2>&1; then
-    local ncspot_title=$(echo "$json" | jq -r '.playable.title // empty')
-    local ncspot_artist=$(echo "$json" | jq -r '.playable.artists[0] // empty')
-    local mode=$(echo "$json" | jq -r '.mode | keys[0] // empty')
-    local ncspot_playing="false"
-    
-    if [ "$mode" = "Playing" ]; then
-      ncspot_playing="true"
-    fi
-    
-    if [ -n "$ncspot_title" ] && [ "$ncspot_title" != "null" ]; then
-      update_bar "$ncspot_title" "$ncspot_artist" "$ncspot_playing"
-      return 0
-    fi
+  
+  # First check if it's valid JSON
+  if ! echo "$json" | jq -e . >/dev/null 2>&1; then
+    return 1
   fi
-  return 1
+  
+  # Check if we have playable data
+  local has_playable=$(echo "$json" | jq -r 'has("playable")')
+  if [ "$has_playable" != "true" ]; then
+    # No track playing, clear the display
+    update_bar "" "" "false"
+    return 0
+  fi
+  
+  local ncspot_title=$(echo "$json" | jq -r '.playable.title // empty')
+  local ncspot_artist=$(echo "$json" | jq -r '.playable.artists[0] // empty')
+  local mode=$(echo "$json" | jq -r '.mode | keys[0] // empty' 2>/dev/null)
+  local ncspot_playing="false"
+  
+  if [ "$mode" = "Playing" ]; then
+    ncspot_playing="true"
+  fi
+  
+  if [ -n "$ncspot_title" ] && [ "$ncspot_title" != "null" ] && [ "$ncspot_title" != "empty" ]; then
+    update_bar "$ncspot_title" "$ncspot_artist" "$ncspot_playing"
+    return 0
+  else
+    # No valid title, clear display
+    update_bar "" "" "false"
+    return 0
+  fi
 }
 
 # Try ncspot first if available
@@ -67,13 +87,19 @@ if [ -n "$NCSPOT_SOCK" ]; then
     while true; do
       sleep 2
       ncspot_status=$(get_ncspot_status)
-      if ! parse_ncspot_json "$ncspot_status"; then
-        # ncspot stopped, clear and fall back
+      if [ -z "$ncspot_status" ]; then
+        # No response from ncspot
+        echo "No response from ncspot, falling back"
         title=""
         artist=""
         playing="false" 
         update_bar "" "" "false"
         break
+      fi
+      if ! parse_ncspot_json "$ncspot_status"; then
+        # Failed to parse, but maybe still running
+        echo "Failed to parse ncspot response: $ncspot_status" >&2
+        continue
       fi
     done
   fi

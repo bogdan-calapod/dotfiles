@@ -32,10 +32,10 @@ for i, workspace in ipairs(workspaces) do
 			highlight = selected,
 		},
 		label = {
-			padding_right = 10,
+			padding_right = 15,
 			color = settings.items.default_color(i),
 			highlight_color = settings.items.highlight_color(i),
-			font = { family = settings.nerd_font, size = 11.0 },
+			font = { family = settings.nerd_font, size = 14.0 },
 			y_offset = 0,
 			highlight = selected,
 		},
@@ -43,7 +43,7 @@ for i, workspace in ipairs(workspaces) do
 		padding_left = 1,
 		background = {
 			color = settings.items.colors.background,
-			border_width = 1,
+			border_width = 0,
 			height = settings.items.height,
 			border_color = selected and settings.items.highlight_color(i) or settings.items.default_color(i),
 		},

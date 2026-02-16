@@ -45,4 +45,8 @@ return {
 		bell = "󰂞",
 		none = "󰂛",
 	},
+	vpn = {
+		connected = "󰌆",
+		disconnected = "󰌊",
+	},
 }
