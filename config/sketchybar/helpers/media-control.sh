@@ -43,39 +43,45 @@ get_ncspot_status() {
 }
 
 # Function to parse ncspot JSON and extract info
+# Consolidates all jq calls into a single invocation to avoid spawning 5 processes per poll
 parse_ncspot_json() {
   local json="$1"
-  
-  # First check if it's valid JSON
-  if ! echo "$json" | jq -e . >/dev/null 2>&1; then
-    return 1
-  fi
-  
-  # Check if we have playable data
-  local has_playable=$(echo "$json" | jq -r 'has("playable")')
-  if [ "$has_playable" != "true" ]; then
-    # No track playing, clear the display
-    update_bar "" "" "false"
-    return 0
-  fi
-  
-  local ncspot_title=$(echo "$json" | jq -r '.playable.title // empty')
-  local ncspot_artist=$(echo "$json" | jq -r '.playable.artists[0] // empty')
-  local mode=$(echo "$json" | jq -r '.mode | keys[0] // empty' 2>/dev/null)
-  local ncspot_playing="false"
-  
-  if [ "$mode" = "Playing" ]; then
-    ncspot_playing="true"
-  fi
-  
-  if [ -n "$ncspot_title" ] && [ "$ncspot_title" != "null" ] && [ "$ncspot_title" != "empty" ]; then
-    update_bar "$ncspot_title" "$ncspot_artist" "$ncspot_playing"
-    return 0
-  else
-    # No valid title, clear display
-    update_bar "" "" "false"
-    return 0
-  fi
+
+  # Single jq call: validate JSON, extract all fields at once
+  local parsed
+  parsed=$(echo "$json" | jq -r '
+    if type == "object" and has("playable") then
+      [
+        (.playable.title // ""),
+        (.playable.artists[0] // ""),
+        (if (.mode | keys[0]) == "Playing" then "true" else "false" end)
+      ] | join("\t")
+    elif type == "object" then
+      "NO_TRACK"
+    else
+      "INVALID"
+    end
+  ' 2>/dev/null)
+
+  case "$parsed" in
+    INVALID)
+      return 1
+      ;;
+    NO_TRACK)
+      update_bar "" "" "false"
+      return 0
+      ;;
+    *)
+      local ncspot_title ncspot_artist ncspot_playing
+      IFS=$'\t' read -r ncspot_title ncspot_artist ncspot_playing <<< "$parsed"
+      if [ -n "$ncspot_title" ] && [ "$ncspot_title" != "null" ]; then
+        update_bar "$ncspot_title" "$ncspot_artist" "$ncspot_playing"
+      else
+        update_bar "" "" "false"
+      fi
+      return 0
+      ;;
+  esac
 }
 
 # Try ncspot first if available
@@ -106,28 +112,28 @@ if [ -n "$NCSPOT_SOCK" ]; then
 fi
 
 # Fall back to media-control streaming if ncspot is not available or stopped
+# Note: ncspot is checked once at startup above; we do NOT re-check it on every stream
+# event to avoid spawning jq processes inside a high-frequency event loop.
 echo "Using media-control as media source"
 media-control stream |
   while IFS= read -r line; do
-    # Skip if we have active ncspot
-    if [ -n "$NCSPOT_SOCK" ]; then
-      ncspot_status=$(get_ncspot_status)
-      if parse_ncspot_json "$ncspot_status"; then
-        continue  # Skip media-control if ncspot is active
-      fi
-    fi
-    
-    diff=$(jq -r '.diff' <<<"$line")
+    # Single jq call: extract all needed fields at once
+    parsed=$(jq -r '
+      if (.payload | length) == 0 then
+        "EMPTY"
+      else
+        [
+          (.payload.title // ""),
+          (.payload.artist // ""),
+          (if .payload.playing != null then (.payload.playing | tostring) else "" end)
+        ] | join("\t")
+      end
+    ' <<<"$line" 2>/dev/null)
 
-    payload_empty=$(jq -r 'if (.payload | length) == 0 then "true" else "false" end' <<<"$line")
-    #empty payload means no media is playing/paused
-    if [ "$payload_empty" = "true" ]; then
+    if [ "$parsed" = "EMPTY" ] || [ -z "$parsed" ]; then
       update_bar "" "" "false"
     else
-      new_title=$(jq -r 'if .payload.title then .payload.title else empty end' <<<"$line")
-      new_artist=$(jq -r 'if .payload.artist then .payload.artist else empty end' <<<"$line") 
-      new_playing=$(jq -r 'if .payload.playing != null then .payload.playing else empty end' <<<"$line")
-
+      IFS=$'\t' read -r new_title new_artist new_playing <<< "$parsed"
       update_bar "$new_title" "$new_artist" "$new_playing"
     fi
   done

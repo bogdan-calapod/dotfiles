@@ -20,7 +20,7 @@ local vpn = sbar.add("item", "widgets.vpn", {
 			size = 13.0,
 		},
 	},
-	update_freq = 10, -- Check VPN status every 10 seconds
+	update_freq = 120, -- Check VPN status every 2 minutes (VPN state changes rarely)
 })
 
 sbar.add("item", "widgets.vpn.padding", {

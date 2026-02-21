@@ -76,7 +76,8 @@ end
 update_timew()
 
 -- Set up timer to update every 10 seconds
-sbar.exec("sleep 10 && while true; do sleep 10; sketchybar --trigger timew_update; done &")
+-- Kill any previously orphaned loop before spawning a new one to prevent accumulation on reload
+sbar.exec("pkill -f 'sketchybar --trigger timew_update' 2>/dev/null; sleep 10 && while true; do sleep 10; sketchybar --trigger timew_update; done &")
 
 -- Subscribe to the update event
 timew:subscribe("timew_update", function(env)

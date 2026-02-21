@@ -1,0 +1,8 @@
+name: 📁 Misc
+root: ~/
+
+windows:
+  - misc:
+      name: 📁 Misc
+      panes:
+        -
