@@ -1,17 +1,21 @@
 return {
-	plus = "",
-	loading = "",
+	plus = "",
+	loading = "",
 	apple = "",
-	rebel = "",
-	empire = "",
-	gear = "",
-	cpu = "",
-	nuke = "",
+	rebel = "",
+	empire = "",
+	gear = "",
+	cpu = "",
+	nuke = "",
 	clipboard = "󰅇",
 
 	switch = {
-		on = "",
-		off = "",
+		on = "",
+		off = "",
+	},
+	display = {
+		all = "󰍹", -- multiple displays
+		main = "󰍺", -- single display
 	},
 	volume = {
 		_100 = "",
