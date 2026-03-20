@@ -1,0 +1,10 @@
+name: 📝 Blog
+root: ~/repos/misc/bogdan-calapod.github.io
+
+windows:
+  - blog:
+      name: 📝 Blog
+      layout: even-horizontal
+      panes:
+        - nvim
+        - hugo serve

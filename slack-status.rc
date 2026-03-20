@@ -1,0 +1,133 @@
+#!/bin/bash 
+
+PRESET_EMOJI_call=":headphones:"
+PRESET_TEXT_call="In a call"
+
+PRESET_EMOJI_misc=":computer:"
+PRESET_TEXT_misc="Working"
+
+PRESET_EMOJI_feature=":sparkles:"
+PRESET_TEXT_feature="Working on a new feature"
+
+PRESET_EMOJI_bugfix=":bug:"
+PRESET_TEXT_bugfix="Bugfixing"
+
+PRESET_EMOJI_design=":art:"
+PRESET_TEXT_design="Messing around in Figma"
+
+PRESET_EMOJI_discord=":discord:"
+PRESET_TEXT_discord="Discord & Working"
+
+PRESET_EMOJI_investigation=":mag:"
+PRESET_TEXT_investigation="Investigating"
+
+PRESET_EMOJI_brb=":brb:"
+PRESET_TEXT_brb="A bit out, be right back"
+
+# Slack Status Updater function
+# This function is based on:
+# https://github.com/mivok/slack_status_updater/blob/master/README.md
+#
+# In order to configure, place the slack token in the SLACK_TOKEN
+# environment variable. Everything else will be done automatically
+# when using the time tracking functions.
+#
+# This function takes two parameters - an emoji to use and a status text.
+#
+# There are some presets in the above variable you can use.
+function update-slack-status() {
+
+  if [[ -z $SLACK_TOKEN ]]; then
+    echo " No Slack Token configured - skipping status update."
+    return
+  fi
+
+  # Colors
+  red=$(tput setaf 1)
+  green=$(tput setaf 2)
+  reset=$(tput sgr0)
+
+  EMOJI="$1"
+  TEXT="$2"
+
+  echo " Updating Slack status..."
+
+  PROFILE="{\"status_emoji\":\"$EMOJI\",\"status_text\":\"$TEXT\"}"
+  RESPONSE=$(curl -s --data token="$SLACK_TOKEN" \
+    --data-urlencode profile="$PROFILE" \
+    https://slack.com/api/users.profile.set)
+  if echo "$RESPONSE" | grep -q '"ok":true,'; then
+    echo "${green}Status updated ok${reset}"
+  else
+    echo "${red}There was a problem updating the status${reset}"
+    echo "Response: $RESPONSE"
+  fi
+}
+
+# Helper function to clear slack status
+function set-slack-clear() {
+  update-slack-status "" ""
+}
+
+# Helper function to set slack status as BRB
+function set-slack-brb() {
+  update-slack-status "$PRESET_EMOJI_brb" "$PRESET_TEXT_brb"
+}
+
+# Helper function to set slack status as design
+function set-slack-design() {
+  update-slack-status "$PRESET_EMOJI_design" "$PRESET_TEXT_design"
+}
+
+# Helper function to set slack status as discord
+function set-slack-discord() {
+  update-slack-status "$PRESET_EMOJI_discord" "$PRESET_TEXT_discord"
+}
+
+function sync-timew() {
+  echo "🏠 Syncing timew repo..."
+  CWD=$(pwd)
+  cd ~/.timewarrior/
+  git add .
+  git commit -m 'task(auto): Sync time'
+  git pull
+  git push
+  cd $CWD
+}
+
+function stop-tracking() {
+  timew stop
+  set-slack-clear
+  sync-timew
+}
+
+function start-daily() {
+  stop-tracking
+  start-call "Daily"
+  standup
+}
+
+function start-call() {
+  stop-tracking
+  timew start "$1" "📞 Call"
+  update-slack-status "$PRESET_EMOJI_call" "$PRESET_TEXT_call"
+}
+
+function start-discord() {
+  stop-tracking
+  timew start "Discord & Work" "📞 Call"
+  set-slack-discord
+}
+
+function start-misc() {
+  stop-tracking
+  timew start "$1" "🔧 Miscellaneous"
+  update-slack-status "$PRESET_EMOJI_misc" "$PRESET_TEXT_misc"
+}
+
+function start-design() {
+  stop-tracking
+  timew start "$1" "🎨 Design"
+  update-slack-status "$PRESET_EMOJI_design" "$PRESET_TEXT_design"
+}
+
