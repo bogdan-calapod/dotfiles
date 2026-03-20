@@ -141,6 +141,7 @@ alt-shift-n = 'move-workspace-to-monitor next --wrap-around'
 ctrl-cmd-shift-n = 'move-node-to-monitor next --focus-follows-window --wrap-around'
 
 cmd-shift-x = 'close'
+cmd-alt-shift-r = 'exec-and-forget bash ~/.config/aerospace/layout-restore.sh'
 # alt-g = 'exec-and-forget /Users/bogdan/.config/aerospace/ghost-windows.sh'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
@@ -216,9 +217,8 @@ run = 'layout floating'
 
 # Auto window shift
 
-# Terminal apps 
 [[on-window-detected]]
-if.app-id = 'Zen'
+if.app-id = 'org.mozilla.com.zen.browser'
 run = 'move-node-to-workspace 1'
 
 # Terminal apps 
@@ -245,7 +245,7 @@ run = 'move-node-to-workspace 3'
 
 [[on-window-detected]]
 if.app-id = 'com.openai.chat'
-run = 'move-node-to-workspace 4'
+run = 'move-node-to-workspace 3'
 
 # Communication apps
 [[on-window-detected]]
