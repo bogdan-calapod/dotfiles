@@ -45,4 +45,5 @@ root: ~/
 # attach: false
 
 windows:
+  - ytm: ncytm
   - spotify: ncspot

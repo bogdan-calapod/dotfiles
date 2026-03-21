@@ -20,6 +20,7 @@ local display_toggle = sbar.add("item", "widgets.display_toggle", {
 	},
 	background = {
 		color = colors.transparent,
+		border_width = 0,
 	},
 })
 
