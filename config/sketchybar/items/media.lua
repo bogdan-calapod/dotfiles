@@ -1,184 +1,161 @@
 local icons = require("icons")
 local colors = require("colors")
+local settings = require("settings")
 
-local whitelist = {
-	["Spotify"] = true,
-	["YouTube Music"] = true,
-	["Microsoft Edge"] = true,
-}
+-- Simple media widget using media-control (same info as macOS Control Center)
 
-local media_cover = sbar.add("item", {
+local media_artist = sbar.add("item", "media.artist", {
 	position = "right",
-	background = {
-		image = {
-			string = "media.artwork",
-			scale = 0.85,
-		},
-		color = colors.transparent,
-	},
+	icon = { drawing = false },
 	label = {
-		drawing = false,
+		string = "",
+		font = { size = 9 },
+		color = colors.with_alpha(colors.white, 0.6),
+		max_chars = 20,
+		y_offset = 6,
+		padding_right = 8,
 	},
+	background = { border_width = 0 },
+	padding_left = 0,
+	padding_right = 0,
+	width = 0,
+	drawing = false,
+})
+
+local media_title = sbar.add("item", "media.title", {
+	position = "right",
+	icon = { drawing = false },
+	label = {
+		string = "",
+		font = { size = 11 },
+		color = colors.white,
+		max_chars = 18,
+		y_offset = -5,
+		padding_right = 8,
+	},
+	background = { border_width = 0 },
+	padding_left = 0,
+	padding_right = 0,
+	width = 0,
+	drawing = false,
+})
+
+local media_icon = sbar.add("item", "media.icon", {
+	position = "right",
 	icon = {
-		drawing = false,
+		string = icons.media.play_pause,
+		font = { family = settings.nerd_font, size = 14.0 },
+		color = colors.white,
+		padding_left = 4,
+		padding_right = 4,
+	},
+	label = { drawing = false },
+	background = {
+		color = colors.with_alpha(colors.black, 0.3),
+		corner_radius = 6,
+		height = 22,
+		border_width = 0,
 	},
 	drawing = false,
 	updates = true,
+	update_freq = 3,
 	popup = {
 		align = "center",
 		horizontal = true,
 	},
 })
 
-local media_artist = sbar.add("item", {
-	position = "right",
-	drawing = false,
-	padding_left = 3,
-	padding_right = 0,
-	width = 0,
-	icon = {
-		drawing = false,
-	},
-	label = {
-		width = 0,
-		font = {
-			size = 9,
-		},
-		color = colors.with_alpha(colors.white, 0.6),
-		max_chars = 18,
-		y_offset = 6,
-	},
-})
-
-local media_title = sbar.add("item", {
-	position = "right",
-	drawing = false,
-	padding_left = 3,
-	padding_right = 0,
-	icon = {
-		drawing = false,
-	},
-	label = {
-		font = {
-			size = 11,
-		},
-		width = 0,
-		max_chars = 16,
-		y_offset = -5,
-	},
-})
-
+-- Popup controls
 sbar.add("item", {
-	position = "popup." .. media_cover.name,
+	position = "popup." .. media_icon.name,
 	icon = {
 		string = icons.media.back,
+		font = { family = settings.nerd_font, size = 16.0 },
+		padding_left = 8,
+		padding_right = 8,
 	},
-	label = {
-		drawing = false,
-	},
-	click_script = "/opt/homebrew/bin/media-control previous-track",
+	label = { drawing = false },
+	click_script = "media-control previous-track",
 })
+
 sbar.add("item", {
-	position = "popup." .. media_cover.name,
+	position = "popup." .. media_icon.name,
 	icon = {
 		string = icons.media.play_pause,
+		font = { family = settings.nerd_font, size = 18.0 },
+		padding_left = 8,
+		padding_right = 8,
 	},
-	label = {
-		drawing = false,
-	},
-	click_script = "/opt/homebrew/bin/media-control toggle-play-pause",
+	label = { drawing = false },
+	click_script = "media-control toggle-play-pause",
 })
+
 sbar.add("item", {
-	position = "popup." .. media_cover.name,
+	position = "popup." .. media_icon.name,
 	icon = {
 		string = icons.media.forward,
+		font = { family = settings.nerd_font, size = 16.0 },
+		padding_left = 8,
+		padding_right = 8,
 	},
-	label = {
-		drawing = false,
-	},
-	click_script = "/opt/homebrew/bin/media-control next-track",
+	label = { drawing = false },
+	click_script = "media-control next-track",
 })
 
-local interrupt = 0
-local function animate_detail(detail)
-	if not detail then
-		interrupt = interrupt - 1
-	end
-	if interrupt > 0 and not detail then
-		return
-	end
+-- Update media info
+local function update_media()
+	sbar.exec("media-control get 2>/dev/null", function(result)
+		if type(result) == "table" then
+			local title = result.title
+			local artist = result.artist
+			local playing = result.playing
 
-	sbar.animate("tanh", 30, function()
-		media_artist:set({
-			label = {
-				width = detail and "dynamic" or 0,
-			},
-		})
-		media_title:set({
-			label = {
-				width = detail and "dynamic" or 0,
-			},
-		})
+			local has_media = title and title ~= ""
+
+			if has_media then
+				local icon = playing and icons.media.play_pause or icons.media.back
+
+				media_icon:set({
+					drawing = true,
+					icon = { string = icon },
+				})
+				media_title:set({
+					drawing = true,
+					label = { string = title, width = "dynamic" },
+				})
+				media_artist:set({
+					drawing = (artist and artist ~= ""),
+					label = { string = artist or "", width = "dynamic" },
+				})
+			else
+				media_icon:set({ drawing = false })
+				media_title:set({ drawing = false })
+				media_artist:set({ drawing = false })
+			end
+		else
+			media_icon:set({ drawing = false })
+			media_title:set({ drawing = false })
+			media_artist:set({ drawing = false })
+		end
 	end)
 end
 
-media_cover:subscribe("media_stream_changed", function(env)
-	-- Show media widget when we have title and artist  
-	local title = env.title or ""
-	local artist = env.artist or ""
-	local playing = env.playing or "false"
-	
-	local has_media = (title ~= "" and artist ~= "")
-	local drawing = has_media
-	
-	media_artist:set({
-		drawing = drawing,
-		label = artist,
-	})
-	media_title:set({
-		drawing = drawing,
-		label = title,
-	})
-	media_cover:set({
-		drawing = drawing,
-	})
+-- Subscribe to events
+media_icon:subscribe("routine", update_media)
+media_icon:subscribe("forced", update_media)
 
-	if drawing then
-		-- Keep text visible permanently while media is playing
-		animate_detail(true)
+media_icon:subscribe("mouse.clicked", function(env)
+	if env.BUTTON == "left" then
+		sbar.exec("media-control toggle-play-pause")
+		update_media()
 	else
-		media_cover:set({
-			popup = {
-				drawing = false,
-			},
-		})
+		media_icon:set({ popup = { drawing = "toggle" } })
 	end
 end)
 
-media_cover:subscribe("mouse.entered", function(env)
-	interrupt = interrupt + 1
-	animate_detail(true)
+media_icon:subscribe("mouse.exited.global", function()
+	media_icon:set({ popup = { drawing = false } })
 end)
 
-media_cover:subscribe("mouse.exited", function(env)
-	animate_detail(false)
-end)
-
-media_cover:subscribe("mouse.clicked", function(env)
-	media_cover:set({
-		popup = {
-			drawing = "toggle",
-		},
-	})
-end)
-
-media_title:subscribe("mouse.exited.global", function(env)
-	media_cover:set({
-		popup = {
-			drawing = false,
-		},
-	})
-end)
-
--- Start the media-control helper script to stream media updates
-sbar.exec("pkill -f 'helpers/media-control' 2>/dev/null; sleep 0.1 && /Users/bogdan/repos/misc/dotfiles/config/sketchybar/helpers/media-control-wrapper.sh &")
+-- Initial update
+update_media()
