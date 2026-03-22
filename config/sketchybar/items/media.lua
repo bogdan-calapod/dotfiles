@@ -4,6 +4,27 @@ local settings = require("settings")
 
 -- Simple media widget using media-control (same info as macOS Control Center)
 
+local artwork_path = "/tmp/sketchybar_album_art.jpg"
+
+-- Album art item (rightmost, so it appears first visually)
+local media_artwork = sbar.add("item", "media.artwork", {
+	position = "right",
+	icon = { drawing = false },
+	label = { drawing = false },
+	background = {
+		drawing = true,
+		image = {
+			string = artwork_path,
+			scale = 0.38,
+			corner_radius = 4,
+		},
+		color = 0x00000000,
+	},
+	padding_left = 4,
+	padding_right = 0,
+	drawing = false,
+})
+
 local media_artist = sbar.add("item", "media.artist", {
 	position = "right",
 	icon = { drawing = false },
@@ -102,6 +123,9 @@ sbar.add("item", {
 	click_script = "media-control next-track",
 })
 
+-- Track last artwork to avoid unnecessary updates
+local last_artwork_hash = ""
+
 -- Update media info
 local function update_media()
 	sbar.exec("media-control get 2>/dev/null", function(result)
@@ -109,6 +133,7 @@ local function update_media()
 			local title = result.title
 			local artist = result.artist
 			local playing = result.playing
+			local artwork_data = result.artworkData
 
 			local has_media = title and title ~= ""
 
@@ -127,15 +152,44 @@ local function update_media()
 					drawing = (artist and artist ~= ""),
 					label = { string = artist or "", width = "dynamic" },
 				})
+
+				-- Handle album artwork
+				if artwork_data and artwork_data ~= "" then
+					-- Use a simple hash (first 100 chars) to detect changes
+					local artwork_hash = string.sub(artwork_data, 1, 100)
+					if artwork_hash ~= last_artwork_hash then
+						last_artwork_hash = artwork_hash
+						-- Decode base64 and save to temp file using jq for safe extraction
+						sbar.exec(
+							"media-control get 2>/dev/null | jq -r '.artworkData // empty' | base64 -d > "
+								.. artwork_path,
+							function()
+								media_artwork:set({
+									drawing = true,
+									background = { image = { string = artwork_path } },
+								})
+							end
+						)
+					else
+						media_artwork:set({ drawing = true })
+					end
+				else
+					media_artwork:set({ drawing = false })
+					last_artwork_hash = ""
+				end
 			else
 				media_icon:set({ drawing = false })
 				media_title:set({ drawing = false })
 				media_artist:set({ drawing = false })
+				media_artwork:set({ drawing = false })
+				last_artwork_hash = ""
 			end
 		else
 			media_icon:set({ drawing = false })
 			media_title:set({ drawing = false })
 			media_artist:set({ drawing = false })
+			media_artwork:set({ drawing = false })
+			last_artwork_hash = ""
 		end
 	end)
 end

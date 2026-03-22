@@ -32,6 +32,7 @@ local volume_icon = sbar.add("item", "widgets.volume2", {
 		},
 	},
 	label = {
+		display = false,
 		width = 25,
 		align = "left",
 		font = {
