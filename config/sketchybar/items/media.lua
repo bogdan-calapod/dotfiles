@@ -4,24 +4,49 @@ local settings = require("settings")
 
 -- Simple media widget using media-control (same info as macOS Control Center)
 
-local artwork_path = "/tmp/sketchybar_album_art.jpg"
+local artwork_dir = "/tmp"
+local artwork_prefix = "sketchybar_album_art_"
+
+-- Seed random number generator
+math.randomseed(os.time())
+
+-- Generate random hash for unique filenames
+local function random_hash()
+	local chars = "abcdefghijklmnopqrstuvwxyz0123456789"
+	local hash = ""
+	for _ = 1, 8 do
+		local idx = math.random(1, #chars)
+		hash = hash .. chars:sub(idx, idx)
+	end
+	return hash
+end
+
+-- Cleanup old artwork files
+local function cleanup_artwork()
+	sbar.exec("rm -f " .. artwork_dir .. "/" .. artwork_prefix .. "*.jpg 2>/dev/null")
+end
 
 -- Album art item (rightmost, so it appears first visually)
 local media_artwork = sbar.add("item", "media.artwork", {
 	position = "right",
-	icon = { drawing = false },
-	label = { drawing = false },
-	background = {
+	icon = {
 		drawing = true,
-		image = {
-			string = artwork_path,
-			scale = 0.38,
-			corner_radius = 4,
+		string = " ",
+		background = {
+			drawing = true,
+			image = {
+				width = 25,
+				height = 25,
+				scale = 0.4,
+				corner_radius = 4,
+			},
+			color = 0x00000000,
 		},
-		color = 0x00000000,
 	},
+	label = { drawing = false },
+	background = { color = 0x00000000 },
 	padding_left = 4,
-	padding_right = 0,
+	padding_right = 4,
 	drawing = false,
 })
 
@@ -159,14 +184,20 @@ local function update_media()
 					local artwork_hash = string.sub(artwork_data, 1, 100)
 					if artwork_hash ~= last_artwork_hash then
 						last_artwork_hash = artwork_hash
-						-- Decode base64 and save to temp file using jq for safe extraction
+						-- Generate new unique filename
+						local new_artwork_path = artwork_dir .. "/" .. artwork_prefix .. random_hash() .. ".jpg"
+						-- Remove old files and decode base64 to new file
 						sbar.exec(
-							"media-control get 2>/dev/null | jq -r '.artworkData // empty' | base64 -d > "
-								.. artwork_path,
+							"rm -f "
+								.. artwork_dir
+								.. "/"
+								.. artwork_prefix
+								.. "*.jpg 2>/dev/null; media-control get 2>/dev/null | jq -r '.artworkData // empty' | base64 -d > "
+								.. new_artwork_path,
 							function()
 								media_artwork:set({
 									drawing = true,
-									background = { image = { string = artwork_path } },
+									icon = { background = { image = { string = new_artwork_path } } },
 								})
 							end
 						)
