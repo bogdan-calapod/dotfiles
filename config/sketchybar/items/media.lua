@@ -21,30 +21,20 @@ local function random_hash()
 	return hash
 end
 
--- Cleanup old artwork files
-local function cleanup_artwork()
-	sbar.exec("rm -f " .. artwork_dir .. "/" .. artwork_prefix .. "*.jpg 2>/dev/null")
-end
-
 -- Album art item (rightmost, so it appears first visually)
 local media_artwork = sbar.add("item", "media.artwork", {
 	position = "right",
-	icon = {
+	icon = { drawing = false },
+	label = { drawing = false },
+	background = {
 		drawing = true,
-		string = " ",
-		background = {
-			drawing = true,
-			image = {
-				width = 25,
-				height = 25,
-				scale = 0.4,
-				corner_radius = 4,
-			},
-			color = 0x00000000,
+		color = 0x00000000,
+		image = {
+			scale = 0.4,
+			corner_radius = 4,
 		},
 	},
-	label = { drawing = false },
-	background = { color = 0x00000000 },
+	width = 25,
 	padding_left = 4,
 	padding_right = 4,
 	drawing = false,
@@ -180,13 +170,15 @@ local function update_media()
 
 				-- Handle album artwork
 				if artwork_data and artwork_data ~= "" then
-					-- Use a simple hash (first 100 chars) to detect changes
-					local artwork_hash = string.sub(artwork_data, 1, 100)
+					-- Use last 200 chars of artwork data to detect changes (headers are at the start)
+					local artwork_hash = string.sub(artwork_data, -200)
 					if artwork_hash ~= last_artwork_hash then
 						last_artwork_hash = artwork_hash
 						-- Generate new unique filename
 						local new_artwork_path = artwork_dir .. "/" .. artwork_prefix .. random_hash() .. ".jpg"
-						-- Remove old files and decode base64 to new file
+						-- Clear image first (required to force sketchybar to reload)
+						sbar.exec("sketchybar --set media.artwork background.image=")
+						-- Remove old files and decode new artwork
 						sbar.exec(
 							"rm -f "
 								.. artwork_dir
@@ -195,10 +187,10 @@ local function update_media()
 								.. "*.jpg 2>/dev/null; media-control get 2>/dev/null | jq -r '.artworkData // empty' | base64 -d > "
 								.. new_artwork_path,
 							function()
-								media_artwork:set({
-									drawing = true,
-									icon = { background = { image = { string = new_artwork_path } } },
-								})
+								-- Set new image after file is written
+								sbar.exec(
+									"sketchybar --set media.artwork drawing=on background.image=" .. new_artwork_path
+								)
 							end
 						)
 					else
