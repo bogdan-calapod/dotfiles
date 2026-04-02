@@ -2,9 +2,10 @@ local icons = require("icons")
 local colors = require("colors")
 local settings = require("settings")
 
--- Create a timew widget that updates every 10 seconds
+-- Create a timew widget that updates every 10 seconds using native update_freq
 local timew = sbar.add("item", "widgets.timew", {
 	position = "right",
+	update_freq = 10, -- Native sketchybar update frequency (seconds)
 	background = {
 		height = 22,
 		color = {
@@ -72,17 +73,13 @@ local function update_timew()
 	end)
 end
 
--- Initial update
-update_timew()
-
--- Set up timer to update every 10 seconds
--- Kill any previously orphaned loop before spawning a new one to prevent accumulation on reload
-sbar.exec("pkill -f 'sketchybar --trigger timew_update' 2>/dev/null; sleep 10 && while true; do sleep 10; sketchybar --trigger timew_update; done &")
-
--- Subscribe to the update event
-timew:subscribe("timew_update", function(env)
+-- Subscribe to routine event (triggered by update_freq) and other standard events
+timew:subscribe({ "routine", "forced" }, function(env)
 	update_timew()
 end)
+
+-- Initial update
+update_timew()
 
 -- Optional: Click to open timewarrior or show more info
 timew:subscribe("mouse.clicked", function(env)

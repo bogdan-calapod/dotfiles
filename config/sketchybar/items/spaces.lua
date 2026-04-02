@@ -170,56 +170,62 @@ local spaces_indicator = sbar.add("item", {
 	},
 })
 
+-- Helper function to update icons for a single workspace
+local function update_workspace_icons(workspace_index)
+	sbar.exec("aerospace list-windows --workspace " .. workspace_index .. " --format '%{app-name}' --json ", function(apps)
+		local icon_line = ""
+		local no_app = true
+		for _, app in ipairs(apps) do
+			no_app = false
+			local app_name = app["app-name"]
+			local lookup = app_icons[app_name]
+			local icon = ((lookup == nil) and app_icons["default"] or lookup)
+			icon_line = icon_line .. " " .. icon
+		end
+
+		if no_app then
+			icon_line = " "
+		end
+
+		sbar.animate("tanh", 10, function()
+			spaces[workspace_index]:set({
+				label = icon_line,
+			})
+		end)
+	end)
+end
+
 -- Event handles
+-- space_windows_change provides SPACE environment variable indicating which space changed
 space_window_observer:subscribe("space_windows_change", function(env)
-	for i, workspace in ipairs(workspaces) do
-		sbar.exec("aerospace list-windows --workspace " .. i .. " --format '%{app-name}' --json ", function(apps)
-			local icon_line = ""
-			local no_app = true
-			for i, app in ipairs(apps) do
-				no_app = false
-				local app_name = app["app-name"]
-				local lookup = app_icons[app_name]
-				local icon = ((lookup == nil) and app_icons["default"] or lookup)
-				icon_line = icon_line .. " " .. icon
+	-- Only update the affected workspace if SPACE is provided, otherwise update focused
+	local affected_space = env.SPACE and tonumber(env.SPACE)
+	if affected_space and spaces[affected_space] then
+		update_workspace_icons(affected_space)
+	else
+		-- Fallback: update the currently focused workspace
+		sbar.exec("aerospace list-workspaces --focused", function(result)
+			local focused = tonumber(result:match("(%d+)"))
+			if focused and spaces[focused] then
+				update_workspace_icons(focused)
 			end
-
-			if no_app then
-				icon_line = " "
-			end
-
-			sbar.animate("tanh", 10, function()
-				spaces[i]:set({
-					label = icon_line,
-				})
-			end)
 		end)
 	end
 end)
 
+-- aerospace_focus_change fires when window focus changes - update source and destination workspaces
 space_window_observer:subscribe("aerospace_focus_change", function(env)
-	for i, workspace in ipairs(workspaces) do
-		sbar.exec("aerospace list-windows --workspace " .. i .. " --format '%{app-name}' --json ", function(apps)
-			local icon_line = ""
-			local no_app = true
-			for i, app in ipairs(apps) do
-				no_app = false
-				local app_name = app["app-name"]
-				local lookup = app_icons[app_name]
-				local icon = ((lookup == nil) and app_icons["default"] or lookup)
-				icon_line = icon_line .. " " .. icon
-			end
-
-			if no_app then
-				icon_line = " —"
-			end
-
-			sbar.animate("tanh", 10, function()
-				spaces[i]:set({
-					label = icon_line,
-				})
-			end)
-		end)
+	-- Update the focused workspace (where the window moved to or was focused)
+	local focused = env.FOCUSED_WORKSPACE and tonumber(env.FOCUSED_WORKSPACE)
+	local prev = env.PREV_WORKSPACE and tonumber(env.PREV_WORKSPACE)
+	
+	if focused and spaces[focused] then
+		update_workspace_icons(focused)
+	end
+	
+	-- Also update previous workspace if a window was moved between workspaces
+	if prev and prev ~= focused and spaces[prev] then
+		update_workspace_icons(prev)
 	end
 end)
 
