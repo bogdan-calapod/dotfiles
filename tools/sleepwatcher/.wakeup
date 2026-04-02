@@ -1,0 +1,10 @@
+
+# Source - https://superuser.com/a/1819754
+# Posted by Topher Hunt, modified by community. See post 'Timeline' for change history
+# Retrieved 2026-03-31, License - CC BY-SA 4.0
+
+#!/bin/bash
+# Sleepwatcher (Homebrew package) script that runs on wakeup.
+# See also: ~/.sleep, ~/.wakeup, ~/.sleepwatcher.log
+/opt/homebrew/bin/blueutil --power on
+echo "$(date -Iseconds) -- Wake event detected, bluetooth enabled. Bluetooth status: $(/opt/homebrew/bin/blueutil --power)" >> ~/.sleepwatcher.log
