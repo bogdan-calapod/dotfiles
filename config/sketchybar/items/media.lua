@@ -6,6 +6,7 @@ local settings = require("settings")
 
 local artwork_dir = "/tmp"
 local artwork_prefix = "sketchybar_album_art_"
+local PROGRESS_BAR_WIDTH = 50
 
 -- Seed random number generator
 math.randomseed(os.time())
@@ -76,45 +77,26 @@ local media_title = sbar.add("item", "media.title", {
 	drawing = false,
 })
 
--- Progress bar background (track)
-local media_progress_bg = sbar.add("item", "media.progress_bg", {
-	position = "right",
-	icon = { drawing = false },
-	label = { drawing = false },
-	background = {
-		drawing = true,
-		color = colors.with_alpha(colors.white, 0.15),
-		corner_radius = 0,
-		height = 1,
-		border_width = 0,
-	},
-	width = 50,
-	padding_left = 0,
-	padding_right = 8,
-	y_offset = -12,
-	drawing = false,
-})
-
--- Progress bar foreground (filled portion)
-local media_progress = sbar.add("item", "media.progress", {
-	position = "right",
-	icon = { drawing = false },
-	label = { drawing = false },
-	background = {
-		drawing = true,
-		color = colors.with_alpha(colors.white, 0.6),
-		corner_radius = 0,
-		height = 1,
-		border_width = 0,
-	},
-	width = 0,
-	padding_left = 0,
-	padding_right = 0,
-	y_offset = -12,
-	drawing = false,
-	updates = true,
-	update_freq = 1,
-})
+-- Progress bar disabled to save energy
+-- local media_progress = sbar.add("slider", "media.progress", PROGRESS_BAR_WIDTH, {
+-- 	position = "right",
+-- 	slider = {
+-- 		width = PROGRESS_BAR_WIDTH,
+-- 		highlight_color = colors.with_alpha(colors.white, 0.6),
+-- 		percentage = 0,
+-- 		background = {
+-- 			color = colors.with_alpha(colors.white, 0.15),
+-- 			corner_radius = 0,
+-- 			height = 2,
+-- 		},
+-- 	},
+-- 	padding_left = 0,
+-- 	padding_right = 8,
+-- 	y_offset = -12,
+-- 	drawing = false,
+-- 	updates = true,
+-- 	update_freq = 1,
+-- })
 
 local media_icon = sbar.add("item", "media.icon", {
 	position = "right",
@@ -134,7 +116,7 @@ local media_icon = sbar.add("item", "media.icon", {
 	},
 	drawing = false,
 	updates = true,
-	update_freq = 3,
+	update_freq = 10,  -- Reduced from 3s to save energy
 	popup = {
 		align = "center",
 		horizontal = true,
@@ -181,14 +163,12 @@ sbar.add("item", {
 -- Track last artwork to avoid unnecessary updates
 local last_artwork_hash = ""
 
--- Progress bar constants
-local PROGRESS_BAR_WIDTH = 50
-
 -- Track playback state for progress calculation
 local last_title = ""
 local last_timestamp = 0
 local last_elapsed = 0
 local last_playing = false
+local last_duration = 0
 
 -- Parse ISO 8601 timestamp to Unix time
 local function parse_timestamp(ts)
@@ -208,8 +188,47 @@ local function parse_timestamp(ts)
 	return 0
 end
 
+-- Progress bar disabled to save energy
+-- local function update_progress_only()
+-- 	if not last_playing or last_duration <= 0 then
+-- 		return
+-- 	end
+--
+-- 	local current_time = os.time(os.date("!*t"))
+-- 	local elapsed = last_elapsed
+-- 	if last_timestamp > 0 then
+-- 		elapsed = last_elapsed + (current_time - last_timestamp)
+-- 	end
+--
+-- 	-- Clamp elapsed to duration
+-- 	if elapsed > last_duration then
+-- 		elapsed = last_duration
+-- 	end
+-- 	if elapsed < 0 then
+-- 		elapsed = 0
+-- 	end
+--
+-- 	local progress_pct = math.floor((elapsed / last_duration) * 100)
+-- 	media_progress:set({
+-- 		slider = { percentage = progress_pct },
+-- 	})
+-- end
+
+-- Track last update time for paused state polling
+local last_update_time = 0
+local PAUSED_UPDATE_INTERVAL = 10 -- Only check every 10 seconds when paused
+
 -- Update media info
 local function update_media()
+	-- If paused, only update occasionally to detect resume
+	if not last_playing and last_title ~= "" then
+		local now = os.time()
+		if now - last_update_time < PAUSED_UPDATE_INTERVAL then
+			return
+		end
+		last_update_time = now
+	end
+
 	sbar.exec("media-control get 2>/dev/null", function(result)
 		if type(result) == "table" then
 			local title = result.title
@@ -238,22 +257,22 @@ local function update_media()
 					label = { string = artist or "", width = "dynamic" },
 				})
 
-				-- Calculate elapsed time
-				-- The timestamp represents when playback started/resumed
-				-- elapsedTime is the position at that timestamp
-				-- So current position = elapsedTime + (now - timestamp) if playing
-				local current_time = os.time(os.date("!*t")) -- UTC time
+				-- Store state for lightweight progress updates
 				local ts_time = parse_timestamp(timestamp)
+				last_timestamp = ts_time
+				last_elapsed = reported_elapsed
+				last_playing = playing
+				last_duration = duration
+				last_title = title
+				last_update_time = os.time()
+
+				-- Calculate current elapsed time
+				local current_time = os.time(os.date("!*t")) -- UTC time
 				local elapsed = reported_elapsed
 
 				if playing and ts_time > 0 then
 					local time_since_ts = current_time - ts_time
 					elapsed = reported_elapsed + time_since_ts
-				end
-
-				-- Track title changes
-				if title ~= last_title then
-					last_title = title
 				end
 
 				-- Clamp elapsed to duration
@@ -264,16 +283,15 @@ local function update_media()
 					elapsed = 0
 				end
 
-				-- Update progress bar
-				local progress_width = 0
-				if duration > 0 then
-					progress_width = math.floor((elapsed / duration) * PROGRESS_BAR_WIDTH)
-				end
-				media_progress_bg:set({ drawing = true })
-				media_progress:set({
-					drawing = true,
-					width = progress_width,
-				})
+				-- Progress bar disabled to save energy
+				-- local progress_pct = 0
+				-- if duration > 0 then
+				-- 	progress_pct = math.floor((elapsed / duration) * 100)
+				-- end
+				-- media_progress:set({
+				-- 	drawing = true,
+				-- 	slider = { percentage = progress_pct },
+				-- })
 
 				-- Handle album artwork
 				if artwork_data and artwork_data ~= "" then
@@ -312,31 +330,31 @@ local function update_media()
 					media_artwork:set({ drawing = false })
 					last_artwork_hash = ""
 				end
-			else
-				media_icon:set({ drawing = false })
-				media_title:set({ drawing = false })
-				media_artist:set({ drawing = false })
-				media_artwork:set({ drawing = false })
-				media_progress_bg:set({ drawing = false })
-				media_progress:set({ drawing = false })
-				last_artwork_hash = ""
-			end
 		else
 			media_icon:set({ drawing = false })
 			media_title:set({ drawing = false })
 			media_artist:set({ drawing = false })
 			media_artwork:set({ drawing = false })
-			media_progress_bg:set({ drawing = false })
-			media_progress:set({ drawing = false })
 			last_artwork_hash = ""
+			last_playing = false
+			last_duration = 0
 		end
+	else
+		media_icon:set({ drawing = false })
+		media_title:set({ drawing = false })
+		media_artist:set({ drawing = false })
+		media_artwork:set({ drawing = false })
+		last_artwork_hash = ""
+		last_playing = false
+		last_duration = 0
+	end
 	end)
 end
 
 -- Subscribe to events
+-- media_icon updates full state every 10 seconds
 media_icon:subscribe("routine", update_media)
 media_icon:subscribe("forced", update_media)
-media_progress:subscribe("routine", update_media)
 
 media_icon:subscribe("mouse.clicked", function(env)
 	if env.BUTTON == "left" then

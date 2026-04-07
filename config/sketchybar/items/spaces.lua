@@ -5,6 +5,41 @@ local app_icons = require("helpers.app_icons")
 
 local spaces = {}
 
+-- Unicode circled capital letters start at U+24B6 (Ⓐ = A)
+-- Unicode circled numbers: ① = U+2460 (1-9), ⓪ = U+24EA (0)
+local function get_circled_char(char)
+	local upper = char:upper()
+	local byte = string.byte(upper)
+	
+	-- Handle A-Z
+	if byte >= string.byte("A") and byte <= string.byte("Z") then
+		return utf8.char(0x24B6 + (byte - string.byte("A")))
+	end
+	
+	-- Handle 0-9
+	if byte >= string.byte("0") and byte <= string.byte("9") then
+		if char == "0" then
+			return utf8.char(0x24EA) -- ⓪
+		else
+			return utf8.char(0x2460 + (byte - string.byte("1"))) -- ①-⑨
+		end
+	end
+	
+	-- Fallback: return a generic app icon
+	return "●"
+end
+
+-- Helper function to get icon for an app, falling back to first letter if not defined
+local function get_app_icon(app_name)
+	local lookup = app_icons[app_name]
+	if lookup ~= nil then
+		return lookup
+	end
+	-- Return circled first letter of app name as fallback (e.g., Ⓢ for Slack)
+	local first_char = app_name:sub(1, 1)
+	return get_circled_char(first_char)
+end
+
 local workspaces = get_workspaces()
 local current_workspace = get_current_workspace()
 local function split(str, sep)
@@ -32,6 +67,7 @@ for i, workspace in ipairs(workspaces) do
 			highlight = selected,
 		},
 		label = {
+			padding_left = 8,
 			padding_right = 15,
 			color = settings.items.default_color(i),
 			highlight_color = settings.items.highlight_color(i),
@@ -64,8 +100,7 @@ for i, workspace in ipairs(workspaces) do
 		for i, app in ipairs(apps) do
 			no_app = false
 			local app_name = app["app-name"]
-			local lookup = app_icons[app_name]
-			local icon = ((lookup == nil) and app_icons["default"] or lookup)
+			local icon = get_app_icon(app_name)
 			icon_line = icon_line .. "  " .. icon
 		end
 
@@ -100,7 +135,10 @@ for i, workspace in ipairs(workspaces) do
 	})
 
 	space:subscribe("aerospace_workspace_change", function(env)
-		local selecteds = env.FOCUSED_WORKSPACE == workspace
+		-- Compare workspace index (i) with focused workspace
+		-- env.FOCUSED_WORKSPACE comes as string from shell trigger
+		local focused_ws = tonumber(env.FOCUSED_WORKSPACE)
+		local selecteds = focused_ws == i
 		space:set({
 			icon = {
 				highlight = selecteds,
@@ -178,8 +216,7 @@ local function update_workspace_icons(workspace_index)
 		for _, app in ipairs(apps) do
 			no_app = false
 			local app_name = app["app-name"]
-			local lookup = app_icons[app_name]
-			local icon = ((lookup == nil) and app_icons["default"] or lookup)
+			local icon = get_app_icon(app_name)
 			icon_line = icon_line .. " " .. icon
 		end
 
