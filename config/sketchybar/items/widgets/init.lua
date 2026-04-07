@@ -5,5 +5,5 @@ require("items.widgets.battery")
 require("items.widgets.uptime")
 require("items.widgets.vpn")
 require("items.widgets.volume")
-require("items.widgets.wifi")
+-- require("items.widgets.wifi") -- Disabled: network_load provider uses significant energy
 require("items.widgets.cpu")
