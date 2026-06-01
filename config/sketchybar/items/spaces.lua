@@ -51,6 +51,37 @@ local function split(str, sep)
 	return result
 end
 
+-- Helper function to update icons for a single workspace
+local function update_workspace_icons(workspace_index)
+	sbar.exec("aerospace list-windows --workspace " .. workspace_index .. " --format '%{app-name}' --json ", function(apps)
+		local icon_line = ""
+		local no_app = true
+		for _, app in ipairs(apps) do
+			no_app = false
+			local app_name = app["app-name"]
+			local icon = get_app_icon(app_name)
+			icon_line = icon_line .. " " .. icon
+		end
+
+		if no_app then
+			icon_line = " "
+		end
+
+		sbar.animate("tanh", 10, function()
+			spaces[workspace_index]:set({
+				label = icon_line,
+			})
+		end)
+	end)
+end
+
+-- Update all workspace icons
+local function update_all_workspace_icons()
+	for i, _ in ipairs(workspaces) do
+		update_workspace_icons(i)
+	end
+end
+
 for i, workspace in ipairs(workspaces) do
 	local selected = workspace == current_workspace
 	local space = sbar.add("item", "item." .. i, {
@@ -138,6 +169,7 @@ for i, workspace in ipairs(workspaces) do
 		-- Compare workspace index (i) with focused workspace
 		-- env.FOCUSED_WORKSPACE comes as string from shell trigger
 		local focused_ws = tonumber(env.FOCUSED_WORKSPACE)
+		local prev_ws = tonumber(env.PREV_WORKSPACE)
 		local selecteds = focused_ws == i
 		space:set({
 			icon = {
@@ -151,6 +183,14 @@ for i, workspace in ipairs(workspaces) do
 				border_color = selecteds and settings.items.highlight_color(i) or settings.items.default_color(i),
 			},
 		})
+
+		-- Update window icons for focused and previous workspaces
+		if focused_ws == i then
+			update_workspace_icons(i)
+		end
+		if prev_ws == i and prev_ws ~= focused_ws then
+			update_workspace_icons(i)
+		end
 	end)
 
 	space:subscribe("mouse.clicked", function(env)
@@ -208,62 +248,11 @@ local spaces_indicator = sbar.add("item", {
 	},
 })
 
--- Helper function to update icons for a single workspace
-local function update_workspace_icons(workspace_index)
-	sbar.exec("aerospace list-windows --workspace " .. workspace_index .. " --format '%{app-name}' --json ", function(apps)
-		local icon_line = ""
-		local no_app = true
-		for _, app in ipairs(apps) do
-			no_app = false
-			local app_name = app["app-name"]
-			local icon = get_app_icon(app_name)
-			icon_line = icon_line .. " " .. icon
-		end
-
-		if no_app then
-			icon_line = " "
-		end
-
-		sbar.animate("tanh", 10, function()
-			spaces[workspace_index]:set({
-				label = icon_line,
-			})
-		end)
-	end)
-end
-
--- Event handles
--- space_windows_change provides SPACE environment variable indicating which space changed
-space_window_observer:subscribe("space_windows_change", function(env)
-	-- Only update the affected workspace if SPACE is provided, otherwise update focused
-	local affected_space = env.SPACE and tonumber(env.SPACE)
-	if affected_space and spaces[affected_space] then
-		update_workspace_icons(affected_space)
-	else
-		-- Fallback: update the currently focused workspace
-		sbar.exec("aerospace list-workspaces --focused", function(result)
-			local focused = tonumber(result:match("(%d+)"))
-			if focused and spaces[focused] then
-				update_workspace_icons(focused)
-			end
-		end)
-	end
-end)
-
--- aerospace_focus_change fires when window focus changes - update source and destination workspaces
-space_window_observer:subscribe("aerospace_focus_change", function(env)
-	-- Update the focused workspace (where the window moved to or was focused)
-	local focused = env.FOCUSED_WORKSPACE and tonumber(env.FOCUSED_WORKSPACE)
-	local prev = env.PREV_WORKSPACE and tonumber(env.PREV_WORKSPACE)
-	
-	if focused and spaces[focused] then
-		update_workspace_icons(focused)
-	end
-	
-	-- Also update previous workspace if a window was moved between workspaces
-	if prev and prev ~= focused and spaces[prev] then
-		update_workspace_icons(prev)
-	end
+-- front_app_switched is a built-in sketchybar event that fires when any app gains/loses
+-- focus, which covers window open, close, and focus changes. Update all workspaces to
+-- catch windows appearing or disappearing on any space.
+space_window_observer:subscribe("front_app_switched", function(env)
+	update_all_workspace_icons()
 end)
 
 spaces_indicator:subscribe("swap_menus_and_spaces", function(env)

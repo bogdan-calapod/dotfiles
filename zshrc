@@ -29,10 +29,6 @@ export RABBITMQ_DEFAULT_PASS=guest
 
 export FP_DISABLE_COMMITIZEN=true
 
-# Lazy load NVM
-export NVM_LAZY_LOAD=true
-export NVM_COMPLETION=true
-
 # # 🔑 SSH
 source /tmp/ssh-agent >/dev/null 2>&1
 ssh-add 2>/dev/null
@@ -43,21 +39,43 @@ if [ $? -ne 0 ]; then
 fi
 source $PATH_TO_CODA_REPOS/devops-tools/coda-rc/.coda-rc
 
-# # 📁 NVM Config
-export NVM_DIR="$HOME/.nvm"
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
+# Node version management is handled by mise (see ~/.zshrc).
 
+# ⚡️ ZSH Config — sensible defaults (replaces oh-my-zsh)
 
-# ⚡️ ZSH Config
-export ZSH="$HOME/.oh-my-zsh"
+# History
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=10000
+setopt extended_history       # save timestamps
+setopt hist_expire_dups_first # trim oldest dup first
+setopt hist_ignore_dups       # don't record consecutive dups
+setopt hist_ignore_space      # leading-space commands aren't saved
+setopt hist_verify            # show expansion before running
+setopt share_history          # share history across sessions
+setopt inc_append_history     # append immediately, not on exit
 
-ENABLE_CORRECTION="true"
-COMPLETION_WAITING_DOTS="true"
+# Directory navigation
+setopt auto_cd                # `dirname` == `cd dirname`
+setopt auto_pushd             # cd pushes to dir stack
+setopt pushd_ignore_dups
+setopt pushd_silent
+alias -- -='cd -'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
 
-plugins=(zsh-nvm git virtualenv colorize docker node npm timewarrior zsh-yarn-completions tmux zsh-syntax-highlighting zsh-autosuggestions)
+# Misc
+setopt interactive_comments   # allow `# comments` in interactive shell
+setopt long_list_jobs         # verbose `jobs` output
+setopt no_beep
+setopt no_flow_control        # free up Ctrl-S / Ctrl-Q
 
-source $ZSH/oh-my-zsh.sh
+# Plugins (sourced from ~/.config/zsh/plugins, which symlinks here)
+ZSH_PLUGINS="$HOME/.config/zsh/plugins"
+source "$ZSH_PLUGINS/zsh-autosuggestions/zsh-autosuggestions.zsh"
+# syntax-highlighting must be sourced LAST among shell plugins
+source "$ZSH_PLUGINS/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 # WSL-only environment and aliases
 if [ -f /proc/version ];  then

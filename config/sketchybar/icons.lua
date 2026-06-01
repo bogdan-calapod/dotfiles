@@ -53,4 +53,16 @@ return {
 		connected = "󰌆",
 		disconnected = "󰌊",
 	},
+	weather = {
+		sunny = "󰖙",
+		night = "󰖔",
+		partly_cloudy = "󰖕",
+		cloudy = "󰖐",
+		rainy = "󰖗",
+		pouring = "󰖖",
+		snowy = "󰼶",
+		fog = "󰖑",
+		lightning = "󰖓",
+		unknown = "󰼯",
+	},
 }

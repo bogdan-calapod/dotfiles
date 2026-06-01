@@ -195,7 +195,7 @@ backspace = ['close-all-windows-but-current', 'mode main']
 
 # Ignore Firefox PiP
 [[on-window-detected]]
-if.app-id = 'org.mozilla.com.zen.browser'
+if.app-id = 'app.zen-browser.zen'
 if.window-title-regex-substring = 'Picture-in-Picture'
 run = 'layout floating'
 
@@ -218,7 +218,7 @@ run = 'layout floating'
 # Auto window shift
 
 [[on-window-detected]]
-if.app-id = 'org.mozilla.com.zen.browser'
+if.app-id = 'app.zen-browser.zen'
 run = 'move-node-to-workspace 1'
 
 # Terminal apps 
@@ -245,6 +245,10 @@ run = 'move-node-to-workspace 3'
 
 [[on-window-detected]]
 if.app-id = 'com.openai.chat'
+run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-id = 'com.anthropic.claudefordesktop'
 run = 'move-node-to-workspace 3'
 
 # Communication apps
@@ -285,9 +289,17 @@ run = 'move-node-to-workspace 5'
 if.app-id = 'ai.elementlabs.lmstudio'
 run = 'move-node-to-workspace 5'
 
+[[on-window-detected]]
+if.app-id = 'com.apple.reminders'
+run = 'move-node-to-workspace 5'
+
 # Misc other
 [[on-window-detected]]
 if.app-id = 'com.microsoft.edgemac'
+run = 'move-node-to-workspace 10'
+
+[[on-window-detected]]
+if.app-id = 'io.robbie.HomeAssistant'
 run = 'move-node-to-workspace 10'
 
 # [[on-window-detected]]

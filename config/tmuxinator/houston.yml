@@ -7,5 +7,5 @@ windows:
       layout: main-vertical
       panes:
         - nvim
-        - mix start
+        - colima start; mix start
         - opencode

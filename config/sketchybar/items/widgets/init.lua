@@ -1,3 +1,4 @@
+require("items.widgets.weather")
 require("items.widgets.display_toggle")
 require("items.widgets.notifications")
 require("items.widgets.timew")

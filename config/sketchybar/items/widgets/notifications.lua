@@ -22,7 +22,7 @@ local notifications = sbar.add("item", "widgets.notifications", {
 		string = "",
 		color = colors.white,
 	},
-	update_freq = 30, -- Update every 30 seconds
+	update_freq = 60, -- Update every 60 seconds (reduced from 30s to save energy)
 })
 
 -- Function to get app icon based on app name

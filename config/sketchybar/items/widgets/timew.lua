@@ -5,7 +5,7 @@ local settings = require("settings")
 -- Create a timew widget that updates every 10 seconds using native update_freq
 local timew = sbar.add("item", "widgets.timew", {
 	position = "right",
-	update_freq = 10, -- Native sketchybar update frequency (seconds)
+	update_freq = 30, -- Native sketchybar update frequency (reduced from 10s to save energy)
 	background = {
 		height = 22,
 		color = {

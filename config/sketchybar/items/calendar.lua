@@ -54,23 +54,20 @@ cal:subscribe({ "forced", "routine", "system_woke" }, function()
 	-- Get current time
 	local current_time = os.date("%H:%M")
 
-	-- Get next event from helper script
-	local handle = io.popen("/Users/bogdan/repos/misc/dotfiles/config/sketchybar/helpers/next_event.sh")
-	local next_event = ""
-	if handle then
-		next_event = handle:read("*a") or ""
+	-- Get next event from helper script (async to avoid blocking)
+	sbar.exec("/Users/bogdan/repos/misc/dotfiles/config/sketchybar/helpers/next_event.sh", function(next_event)
+		next_event = next_event or ""
 		next_event = string.gsub(next_event, "%s+$", "") -- trim trailing whitespace
-		handle:close()
-	end
 
-	-- Format label: time + event (if any)
-	local label_text = current_time
-	if next_event ~= "" then
-		label_text = current_time .. " • " .. next_event
-	end
+		-- Format label: time + event (if any)
+		local label_text = current_time
+		if next_event ~= "" then
+			label_text = current_time .. " • " .. next_event
+		end
 
-	cal:set({
-		icon = "",
-		label = label_text,
-	})
+		cal:set({
+			icon = "",
+			label = label_text,
+		})
+	end)
 end)

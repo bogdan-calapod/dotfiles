@@ -3,8 +3,10 @@
 # ⌚ Script to parse the TimeWarrior output. Used to display it in status bar
 
 # TODO: Change path based on OS
-TIMEW_OUTPUT=$(/usr/local/bin/timew | head -n 1)
-TIME_OUTPUT=$(/usr/local/bin/timew | tail -n 1)
+# Call timew only once and capture full output (optimized to save energy)
+FULL_OUTPUT=$(/usr/local/bin/timew)
+TIMEW_OUTPUT=$(echo "$FULL_OUTPUT" | head -n 1)
+TIME_OUTPUT=$(echo "$FULL_OUTPUT" | tail -n 1)
 
 # Return default output if "Tracking" is not found
 if [[ $TIMEW_OUTPUT == "There is no active time tracking." ]]; then
